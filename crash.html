@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b12">
+<title>Aviator — Demo</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
+  body{background:#0b0b12;color:#e8e8f0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+       user-select:none;-webkit-user-select:none}
+  :root{--panel:#16161f;--line:#22222f;--red:#ff3b30;--green:#22c55e;--gold:#ffd166;--muted:#6a6a88}
+  [hidden]{display:none!important}
+
+  .app{height:100dvh;max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:5px;
+       padding:calc(5px + env(safe-area-inset-top)) 8px calc(6px + env(safe-area-inset-bottom))}
+
+  header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding:0 2px}
+  .brand{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:800;letter-spacing:1px;color:var(--red);
+         user-select:none}
+  .head-right{display:flex;align-items:center;gap:6px}
+  .balance{display:flex;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--line);
+           padding:6px 10px;border-radius:10px;font-size:13px;font-weight:800;color:var(--gold);
+           font-variant-numeric:tabular-nums}
+  .icon-btn{width:32px;height:32px;border-radius:9px;background:var(--panel);border:1px solid var(--line);
+            color:#9a9ab8;font-size:14px;cursor:pointer;display:grid;place-items:center;font-family:inherit}
+  .icon-btn:active{background:#242433;color:#fff}
+  .icon-btn.on{color:#4ade80;border-color:rgba(74,222,128,.4)}
+
+  .history{display:flex;gap:4px;overflow-x:auto;height:24px;flex-shrink:0;scrollbar-width:none;padding:0 1px}
+  .history::-webkit-scrollbar{display:none}
+  .hchip{flex-shrink:0;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:800;
+         font-variant-numeric:tabular-nums;animation:pop .25s ease}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  .hchip.low{background:rgba(255,59,48,.15);color:#ff5b52;border:1px solid rgba(255,59,48,.3)}
+  .hchip.mid{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3)}
+  .hchip.high{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+
+  .stage{position:relative;flex:1.2;min-height:240px;border:1px solid #1e2635;border-radius:16px;overflow:hidden;
+         background:radial-gradient(circle at 50% 64%,#17273f 0%,#0d1320 46%,#080a11 100%)}
+  .stage::before{content:'';position:absolute;inset:-25%;pointer-events:none;
+    background:repeating-conic-gradient(from 0deg at 50% 64%,
+      rgba(120,170,255,.06) 0deg 5deg, rgba(120,170,255,0) 5deg 11deg)}
+  canvas{position:relative;display:block;width:100%;height:100%}
+  .mult{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);pointer-events:none;
+        font-size:clamp(42px,15vw,68px);font-weight:800;letter-spacing:-2.5px;color:#5a6480;
+        font-variant-numeric:tabular-nums;text-shadow:0 4px 40px rgba(0,0,0,.7);transition:color .15s}
+  .msg{position:absolute;bottom:9px;left:10px;right:10px;text-align:center;font-size:11px;
+       color:#8a8aa8;letter-spacing:.3px;pointer-events:none;line-height:1.4}
+  .rid{position:absolute;top:8px;left:12px;font-size:9px;color:#4a4a66;letter-spacing:.4px;
+       pointer-events:none;font-variant-numeric:tabular-nums}
+
+  .panels{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+  .bet-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px}
+  .tabs{display:flex;gap:3px;background:#0f0f18;border-radius:8px;padding:2px;margin-bottom:6px}
+  .tab{flex:1;padding:5px;border:none;background:transparent;color:var(--muted);font-size:11px;
+       font-weight:800;letter-spacing:.5px;border-radius:6px;font-family:inherit;cursor:pointer}
+  .tab.active{background:#22222f;color:#fff}
+  .row{display:grid;grid-template-columns:1.2fr 0.9fr;gap:6px;align-items:stretch}
+  .col{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .amt-box{display:flex;align-items:center;height:36px;background:#0f0f18;border:1px solid #26263a;border-radius:8px;overflow:hidden}
+  .amt-btn{width:30px;height:100%;background:transparent;border:none;color:#8a8aa8;font-size:16px;
+           font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+  .amt-btn:active{background:#26263a;color:#fff}
+  .amt-in{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;font-size:14px;
+          font-weight:800;text-align:center;font-variant-numeric:tabular-nums;font-family:inherit}
+  .amt-in::-webkit-outer-spin-button,.amt-in::-webkit-inner-spin-button{-webkit-appearance:none}
+  .amt-in[type=number]{-moz-appearance:textfield}
+  .quick{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+  .qbtn{height:24px;background:#1a1a26;border:1px solid #26263a;border-radius:6px;color:#9a9ab8;
+        font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;font-variant-numeric:tabular-nums}
+  .qbtn:active{background:#2a2a3a;color:#fff}
+  .auto-box{display:flex;align-items:center;height:44px;background:#0f0f18;border:1px solid #26263a;
+            border-radius:8px;padding:0 8px;gap:5px}
+  .auto-box input{flex:1;min-width:0;background:transparent;border:none;outline:none;color:#fff;
+                  font-size:14px;font-weight:800;font-family:inherit;font-variant-numeric:tabular-nums}
+  .auto-box span{font-size:11px;font-weight:800;color:var(--muted)}
+  .bet-btn{border:none;border-radius:10px;font-family:inherit;font-weight:800;cursor:pointer;
+           font-size:12px;letter-spacing:.5px;line-height:1.3;padding:4px;transition:transform .08s,filter .15s}
+  .bet-btn:active:not(:disabled){transform:scale(.97)}
+  .bet-btn:disabled{opacity:.4;cursor:default}
+  .bet-btn small{display:block;font-size:10px;font-weight:700;opacity:.85;font-variant-numeric:tabular-nums}
+  .bet-btn span,.bet-btn small{pointer-events:none}
+  .bet-btn.place{background:linear-gradient(180deg,#22c55e,#15a34a);color:#fff;box-shadow:0 4px 16px rgba(34,197,94,.28)}
+  .bet-btn.cancel{background:#1c1c28;border:1px solid #3a3a52;color:#9a9ab8}
+  .bet-btn.cash{background:linear-gradient(180deg,#ff8c1a,#e5342a);color:#fff;
+                box-shadow:0 4px 20px rgba(255,100,40,.42);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.14)}}
+  .bet-btn.cashed{background:#14532d;color:#4ade80}
+  .bet-btn.wait{background:#22222f;color:#7a7a9a}
+
+  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:90;display:flex;align-items:flex-end;
+         opacity:0;pointer-events:none;transition:opacity .22s}
+  .sheet.open{opacity:1;pointer-events:auto}
+  .sheet-card{width:100%;max-width:520px;margin:0 auto;background:#12121b;border:1px solid #26263a;
+              border-bottom:none;border-radius:18px 18px 0 0;max-height:76vh;display:flex;flex-direction:column;
+              transform:translateY(100%);transition:transform .26s cubic-bezier(.22,1,.36,1)}
+  .sheet.open .sheet-card{transform:translateY(0)}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 10px;
+              border-bottom:1px solid #1e1e2b}
+  .sheet-head h2{font-size:13px;font-weight:800;letter-spacing:1.5px;color:#ffd166}
+  .sheet-head button{width:30px;height:30px;border-radius:9px;background:#22222f;border:none;color:#8a8aa8;
+                     font-size:14px;font-family:inherit;cursor:pointer}
+  .sheet-body{overflow-y:auto;padding:10px 14px calc(20px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+  .sum{background:#181822;border:1px solid #26263a;border-radius:11px;padding:9px;text-align:center}
+  .sum b{display:block;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;margin-bottom:2px}
+  .sum span{font-size:9px;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;font-weight:700}
+  .rnd{border-bottom:1px solid #1c1c28;padding:10px 2px}
+  .rnd-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .rnd-mult{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+  .rnd-net{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+  .rnd-net.up{color:#4ade80}.rnd-net.down{color:#ff5b52}.rnd-net.none{color:#55556a}
+  .rnd-sub{font-size:10.5px;color:#6a6a88;font-variant-numeric:tabular-nums}
+  .empty{text-align:center;color:#55556a;font-size:12px;padding:36px 0}
+
+  /* HOST PANEL */
+  .host-panel{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;
+              display:flex;align-items:center;justify-content:center;padding:16px;
+              opacity:0;pointer-events:none;transition:opacity .22s}
+  .host-panel.open{opacity:1;pointer-events:auto}
+  .host-card{width:100%;max-width:380px;background:#12121b;border:1px solid #3a3a52;
+             border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+  .host-card h3{font-size:12px;letter-spacing:2px;color:#ffd166;margin-bottom:14px;
+                text-align:center;font-weight:800}
+  .host-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+  .host-row label{font-size:11px;color:#9a9ab8;min-width:82px;font-weight:800;letter-spacing:.3px}
+  .host-row input{flex:1;min-width:0;background:#0f0f18;border:1px solid #26263a;border-radius:8px;
+                  padding:9px;color:#fff;font-size:13px;font-family:inherit;outline:none;
+                  font-variant-numeric:tabular-nums;text-align:center;letter-spacing:4px}
+  .host-row input:focus{border-color:#ffd166}
+  .host-row button{padding:9px 14px;background:#2a2a3a;border:1px solid #3a3a52;border-radius:8px;
+                   color:#fff;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;
+                   letter-spacing:.5px}
+  .host-row button:active{background:#3a3a52}
+  .host-btn{width:100%;padding:11px;background:linear-gradient(180deg,#ff8c1a,#e5342a);
+            border:none;border-radius:10px;color:#fff;font-size:12px;font-weight:800;
+            cursor:pointer;font-family:inherit;letter-spacing:.5px;margin-top:6px}
+  .host-btn:active{transform:scale(.98)}
+  .host-btn.secondary{background:#1c1c28;border:1px solid #3a3a52;color:#9a9ab8}
+  .host-btn.ghost{background:#1c1c28;border:1px solid #3a3a52;color:#9a9ab8}
+  .host-msg{text-align:center;font-size:11px;color:#4ade80;margin-top:12px;min-height:14px;
+            font-weight:700;letter-spacing:.3px}
+  .host-msg.warn{color:#ff9f45}
+  .host-hint{text-align:center;font-size:9.5px;color:#55556a;margin-top:10px;letter-spacing:.3px}
+
+  .toast{position:fixed;top:calc(58px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-16px);
+         background:rgba(20,20,30,.96);border:1px solid #34344a;color:var(--gold);padding:7px 14px;
+         border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;pointer-events:none;
+         transition:opacity .2s,transform .2s;white-space:nowrap}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media (max-height:640px){.history{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand" id="brandEl">✈️ AVIATOR</div>
+    <div class="head-right">
+      <div class="balance">🪙 <span id="balanceEl">0.00</span></div>
+      <button class="icon-btn" id="musicBtn" title="Music">🔇</button>
+      <button class="icon-btn" id="histBtn" title="My bets">📋</button>
+    </div>
+  </header>
+
+  <div class="history" id="historyEl"></div>
+
+  <div class="stage">
+    <canvas id="canvas"></canvas>
+    <div class="rid" id="ridEl"></div>
+    <div class="mult" id="multEl">1.00x</div>
+    <div class="msg" id="msgEl">Connecting to wallet…</div>
+  </div>
+
+  <div class="panels" id="panels"></div>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="sheet-card">
+    <div class="sheet-head"><h2>MY BETS</h2><button id="sheetClose">✕</button></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- HOST CONTROLS (PIN-locked) -->
+<div class="host-panel" id="hostPanel">
+  <div class="host-card">
+    <div id="pinGate">
+      <h3>🔒 HOST ACCESS</h3>
+      <div class="host-row">
+        <input id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="• • • •">
+      </div>
+      <button class="host-btn" id="pinUnlock">UNLOCK</button>
+      <button class="host-btn ghost" id="pinCancel">CANCEL</button>
+      <div class="host-msg" id="pinMsg"></div>
+      <div class="host-hint">Enter your secret PIN to continue</div>
+    </div>
+
+    <div id="hostControls" hidden>
+      <h3>⚙ HOST CONTROLS</h3>
+      <div class="host-row">
+        <label>Next crash</label>
+        <input id="hostCrash" type="number" min="1.01" step="0.1" value="2.00" placeholder="e.g. 2.50">
+        <button id="hostSetCrash">SET</button>
+      </div>
+      <button class="host-btn" id="hostForce">💥 FORCE CRASH NOW</button>
+      <button class="host-btn secondary" id="hostClear">🗑 CLEAR ALL DATA</button>
+      <button class="host-btn ghost" id="hostClose">CLOSE</button>
+      <div class="host-msg" id="hostMsg"></div>
+      <div class="host-hint">Tap the ✈️ AVIATOR logo 3× to reopen</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ============ CONFIG ============ */
+const GROW      = 1.16;
+const WAIT_MS   = 5000;
+const CRASH_MS  = 3000;
+const START_BAL = 1000;          // standalone/demo fallback only
+const QUICK     = [10, 50, 100, 500];
+const SAVE_KEY  = 'aviator-demo-v1';
+
+/* 🔑 CHANGE THIS TO YOUR OWN SECRET PIN */
+const HOST_PIN  = '9886';
+
+/* ============ EMBED CONTEXT ============ */
+const IN_IFRAME = window.parent !== window;
+
+/* ============ DOM ============ */
+const $ = id => document.getElementById(id);
+const canvas = $('canvas'), ctx = canvas.getContext('2d');
+const multEl = $('multEl'), msgEl = $('msgEl'), ridEl = $('ridEl');
+const historyEl = $('historyEl'), balanceEl = $('balanceEl'), panelsEl = $('panels');
+const sheet = $('sheet'), sheetBody = $('sheetBody');
+const toastEl = $('toast'), musicBtn = $('musicBtn');
+
+/* ============ STATE ============ */
+let state = 'waiting', stateStart = performance.now();
+let elapsed = 0, mult = 1, crashPoint = 2;
+
+// Wallet: the parent website is the source of truth.
+let balance = IN_IFRAME ? 0 : START_BAL;
+let walletReady = !IN_IFRAME;
+
+// host
+let pendingCrash = null;
+let hostActive = false;
+let hostUnlocked = false;
+
+let chipHistory = [];
+let roundLog = [];
+let roundId = '';
+
+// flight effects
+let stars = null;
+let particles = [];
+let explosion = [];
+let lastPlaneX = 0, lastPlaneY = 0;
+let drawLast = 0;
+
+const bets = [
+  { amount: 10, mode: 'bet', auto: 2, placed: false, cashed: false, cashedAt: 0, payout: 0 },
+  { amount: 10, mode: 'bet', auto: 2, placed: false, cashed: false, cashedAt: 0, payout: 0 }
+];
+
+/* ============ PERSIST (stats only — wallet lives on the website) ============ */
+function save() {
+  try {
+    const data = { chipHistory, roundLog };
+    if (!IN_IFRAME) data.balance = balance;   // standalone demo only
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (!IN_IFRAME && typeof d.balance === 'number' && isFinite(d.balance)) balance = d.balance;
+    if (Array.isArray(d.chipHistory)) chipHistory = d.chipHistory.slice(0, 14);
+    if (Array.isArray(d.roundLog)) roundLog = d.roundLog.slice(0, 60);
+  } catch (e) {}
+}
+
+/* ============ HELPERS ============ */
+const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtInt = n => n.toLocaleString('en-US');
+function buzz(ms) { if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} } }
+function toast(t) {
+  toastEl.textContent = t; toastEl.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => toastEl.classList.remove('show'), 1200);
+}
+function newRoundId() {
+  const h = () => Math.floor(Math.random() * 16).toString(16);
+  let s = '';
+  for (let i = 0; i < 32; i++) s += h();
+  return s.slice(0, 8) + '-' + s.slice(8, 12) + '-' + s.slice(12, 16) + '-' + s.slice(16, 20) + '-' + s.slice(20);
+}
+
+/* =========================================================
+   WALLET BRIDGE  (game  <->  Crore Club website)
+   ---------------------------------------------------------
+   OUT (game → site):
+     { ccg:true, type:'ready' }
+     { ccg:true, type:'getBalance', id }
+     { ccg:true, type:'bet',    id, amount }
+     { ccg:true, type:'win',    id, amount }
+     { ccg:true, type:'settle', id, delta }   // +refund / -charge
+   IN (site → game):
+     { ccg:true, type:'balance', balance, ok }
+     { ccg:true, type:'result',  id, ok, balance, reason }
+   ========================================================= */
+const MIN_BET = 1;
+let seq = 0;
+const pending = {};
+
+function post(msg) {
+  if (!IN_IFRAME) return;
+  try { window.parent.postMessage(msg, '*'); } catch (e) {}
+}
+
+function call(type, data) {
+  return new Promise(resolve => {
+    if (!IN_IFRAME) return resolve({ ok: true, balance });
+    const id = 'r' + (++seq);
+    pending[id] = resolve;
+    post(Object.assign({ ccg: true, type, id }, data || {}));
+    setTimeout(() => {
+      if (pending[id]) { delete pending[id]; resolve({ ok: false, reason: 'timeout', balance }); }
+    }, 8000);
+  });
+}
+
+function applyBalance(v) {
+  balance = Math.max(0, Math.floor(Number(v) || 0));
+  walletReady = true;
+  updateBalance();
+  updateButtons();
+}
+
+window.addEventListener('message', e => {
+  const d = e.data;
+  if (!d || d.ccg !== true) return;
+
+  // reply to one of our requests
+  if (d.id && pending[d.id]) {
+    const res = pending[d.id];
+    delete pending[d.id];
+    if (typeof d.balance === 'number') applyBalance(d.balance);
+    return res(d);
+  }
+
+  // unsolicited balance push from the site
+  if (d.type === 'balance' && typeof d.balance === 'number') applyBalance(d.balance);
+});
+
+function requestWallet() {
+  post({ ccg: true, type: 'ready' });
+  call('getBalance').then(r => {
+    if (r && typeof r.balance === 'number') applyBalance(r.balance);
+  });
+}
+
+/* ============ HOST CONTROLS ============ */
+const hostPanel = $('hostPanel');
+const hostMsg = $('hostMsg');
+const hostBadge = $('hostBadge') || { hidden:true, textContent:'' };
+const hostCrash = $('hostCrash');
+const pinGate = $('pinGate');
+const hostControls = $('hostControls');
+const pinInput = $('pinInput');
+const pinMsg = $('pinMsg');
+
+let hostMsgTimer = null;
+function hostMsg_(text, warn) {
+  hostMsg.textContent = text;
+  hostMsg.classList.toggle('warn', !!warn);
+  clearTimeout(hostMsgTimer);
+  hostMsgTimer = setTimeout(() => { hostMsg.textContent = ''; }, 2200);
+}
+
+function openHost() {
+  hostPanel.classList.add('open');
+  if (hostUnlocked) {
+    pinGate.hidden = true;
+    hostControls.hidden = false;
+    hostActive = true;
+    hostBadge.hidden = false;
+    hostCrash.value = (pendingCrash !== null ? pendingCrash : crashPoint || 2).toFixed(2);
+  } else {
+    pinGate.hidden = false;
+    hostControls.hidden = true;
+    pinInput.value = '';
+    pinMsg.textContent = '';
+    pinMsg.classList.remove('warn');
+    setTimeout(() => pinInput.focus(), 150);
+  }
+}
+function closeHost() { hostPanel.classList.remove('open'); }
+
+$('hostClose').addEventListener('click', closeHost);
+$('pinCancel').addEventListener('click', closeHost);
+hostPanel.addEventListener('click', e => { if (e.target === hostPanel) closeHost(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHost(); });
+
+function tryUnlock() {
+  const pin = pinInput.value.trim();
+  if (pin === HOST_PIN) {
+    hostUnlocked = true; hostActive = true; hostBadge.hidden = false;
+    pinGate.hidden = true; hostControls.hidden = false;
+    hostCrash.value = (pendingCrash !== null ? pendingCrash : crashPoint || 2).toFixed(2);
+    buzz(30);
+  } else {
+    pinMsg.textContent = 'Incorrect PIN'; pinMsg.classList.add('warn');
+    pinInput.value = ''; pinInput.focus(); buzz(120);
+  }
+}
+$('pinUnlock').addEventListener('click', tryUnlock);
+pinInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+$('hostSetCrash').addEventListener('click', () => {
+  let v = parseFloat(hostCrash.value);
+  if (!isFinite(v) || v < 1.01) { hostMsg_('Min is 1.01x', true); return; }
+  if (v > 5000) v = 5000;
+  v = Math.round(v * 100) / 100;
+  pendingCrash = v;
+  hostCrash.value = v.toFixed(2);
+  if (state === 'flying') { crashPoint = v; hostMsg_('Applied to current round ✓'); }
+  else hostMsg_('Next round set to ' + v.toFixed(2) + 'x ✓');
+});
+
+$('hostForce').addEventListener('click', () => {
+  if (state !== 'flying') { hostMsg_('Not flying right now', true); return; }
+  crashPoint = mult;
+  hostMsg_('💥 Crash forced!'); buzz(60);
+});
+
+$('hostClear').addEventListener('click', () => {
+  if (!confirm('Clear all saved data and reset balance?')) return;
+  localStorage.removeItem(SAVE_KEY);
+  balance = START_BAL; chipHistory = []; roundLog = []; pendingCrash = null;
+  renderChips(); updateBalance(); save();
+  hostMsg_('All data cleared ✓');
+});
+
+let brandTaps = 0, brandTapTimer = null;
+$('brandEl').addEventListener('click', () => {
+  brandTaps++;
+  clearTimeout(brandTapTimer);
+  brandTapTimer = setTimeout(() => { brandTaps = 0; }, 650);
+  if (brandTaps >= 3) { brandTaps = 0; buzz(20); openHost(); }
+});
+
+/* ============ BET PANELS ============ */
+function panelHTML(i) {
+  return `
+  <div class="bet-panel" data-i="${i}">
+    <div class="tabs">
+      <button class="tab active" data-mode="bet">Bet</button>
+      <button class="tab" data-mode="auto">Auto</button>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="amt-box">
+          <button class="amt-btn" data-act="dec">−</button>
+          <input class="amt-in" type="number" inputmode="decimal" value="10" min="1" step="5">
+          <button class="amt-btn" data-act="inc">+</button>
+        </div>
+        <div class="quick" data-view="bet">
+          ${QUICK.map(q => `<button class="qbtn" data-add="${q}">${fmtInt(q)}</button>`).join('')}
+        </div>
+        <div class="auto-box" data-view="auto" hidden>
+          <input class="auto-in" type="number" inputmode="decimal" value="2.00" min="1.01" step="0.1">
+          <span>x</span>
+        </div>
+      </div>
+      <button class="bet-btn place"><span class="btn-label">BET</span><small class="btn-sub">10</small></button>
+    </div>
+  </div>`;
+}
+panelsEl.innerHTML = panelHTML(0) + panelHTML(1);
+
+function panelEl(i) { return panelsEl.querySelector(`.bet-panel[data-i="${i}"]`); }
+
+for (let i = 0; i < 2; i++) {
+  const p = panelEl(i);
+  const amtIn = p.querySelector('.amt-in');
+  const autoIn = p.querySelector('.auto-in');
+  const btn = p.querySelector('.bet-btn');
+
+  p.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      bets[i].mode = tab.dataset.mode;
+      p.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+      p.querySelector('[data-view="bet"]').hidden = bets[i].mode !== 'bet';
+      p.querySelector('[data-view="auto"]').hidden = bets[i].mode !== 'auto';
+      buzz(8);
+    });
+  });
+
+  const amountLocked = () => {
+    if (state === 'waiting' && !bets[i].placed) return false;
+    amtIn.value = bets[i].amount;
+    return true;
+  };
+
+  amtIn.addEventListener('input', () => {
+    if (amountLocked()) return;
+    bets[i].amount = Math.max(1, Math.floor(parseFloat(amtIn.value) || 1));
+    updateButtons();
+  });
+  amtIn.addEventListener('blur', () => { amtIn.value = bets[i].amount; });
+
+  p.querySelectorAll('.amt-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      if (amountLocked()) return;
+      const step = b.dataset.act === 'inc' ? 5 : -5;
+      bets[i].amount = Math.max(1, bets[i].amount + step);
+      amtIn.value = bets[i].amount;
+      updateButtons();
+      buzz(8);
+    });
+  });
+
+  p.querySelectorAll('.qbtn').forEach(b => {
+    b.addEventListener('click', () => {
+      if (amountLocked()) return;
+      bets[i].amount = Number(b.dataset.add);
+      amtIn.value = bets[i].amount;
+      updateButtons();
+      buzz(8);
+    });
+  });
+
+  autoIn.addEventListener('input', () => {
+    let v = parseFloat(autoIn.value);
+    if (!isFinite(v) || v < 1.01) v = 1.01;
+    bets[i].auto = v;
+  });
+  autoIn.addEventListener('blur', () => { autoIn.value = bets[i].auto.toFixed(2); });
+
+  btn.addEventListener('click', () => onBetButton(i));
+}
+
+/* ============ GAME FLOW ============ */
+function generateCrash() {
+  const r = Math.random();
+  let c = 0.99 / (1 - r);
+  c = Math.floor(c * 100) / 100;
+  if (!isFinite(c) || c > 5000) c = 5000;
+  return Math.max(1.00, c);
+}
+
+function startRound(now) {
+  if (pendingCrash !== null) { crashPoint = pendingCrash; pendingCrash = null; }
+  else crashPoint = generateCrash();
+  roundId = newRoundId();
+  ridEl.textContent = 'Round Id: ' + roundId;
+  state = 'flying'; stateStart = now;
+  elapsed = 0; mult = 1;
+  bets.forEach(b => { b.cashed = false; b.cashedAt = 0; b.payout = 0; });
+  updateButtons();
+}
+
+async function placeBet(i) {
+  const b = bets[i];
+  if (!walletReady) { msgEl.textContent = 'Connecting to wallet…'; return; }
+
+  const amt = Math.max(MIN_BET, Math.floor(b.amount));
+  if (balance < amt) { msgEl.textContent = 'Not enough coins'; return; }
+  b.amount = amt;
+
+  // optimistic debit, then confirm with the site
+  balance -= amt;
+  b.placed = true;
+  updateBalance(); updateButtons();
+
+  const r = await call('bet', { amount: amt });
+  if (!r || !r.ok) {
+    balance += amt;
+    b.placed = false;
+    msgEl.textContent = (r && r.reason === 'insufficient') ? 'Not enough coins' : 'Bet rejected';
+    updateBalance(); updateButtons();
+    return;
+  }
+  applyBalance(r.balance);
+  buzz(15);
+}
+
+async function cancelBet(i) {
+  const b = bets[i];
+  const amt = Math.max(MIN_BET, Math.floor(b.amount));
+  b.placed = false;
+  balance += amt;
+  updateBalance(); updateButtons();
+
+  const r = await call('settle', { delta: amt });   // refund
+  if (r && r.ok) applyBalance(r.balance);
+  buzz(10);
+}
+
+async function cashOut(i) {
+  const b = bets[i];
+  if (state !== 'flying' || !b.placed || b.cashed) return;
+
+  b.cashed = true;
+  b.cashedAt = mult;
+  b.payout = Math.max(0, Math.floor(b.amount * mult));   // site floors to whole coins
+
+  balance += b.payout;
+  updateBalance(); updateButtons(); buzz(30);
+
+  const r = await call('win', { amount: b.payout });
+  if (r && r.ok) applyBalance(r.balance);
+  else if (r && r.ok === false) { balance -= b.payout; updateBalance(); }
+}
+
+function crashRound(now) {
+  state = 'crashed'; stateStart = now;
+  explosion.length = 0; particles.length = 0;
+
+  chipHistory.unshift(crashPoint);
+  if (chipHistory.length > 14) chipHistory.pop();
+  renderChips();
+
+  const entries = [];
+  bets.forEach(b => {
+    if (!b.placed) return;
+    entries.push({ amount: b.amount, cashedAt: b.cashed ? b.cashedAt : 0, payout: b.cashed ? b.payout : 0 });
+  });
+  if (entries.length) {
+    roundLog.unshift({ id: roundId, mult: crashPoint, entries, net: entries.reduce((s, e) => s + (e.payout - e.amount), 0) });
+    if (roundLog.length > 60) roundLog.pop();
+  }
+
+  const won = entries.filter(e => e.payout > 0);
+  if (won.length) {
+    const total = won.reduce((s, e) => s + e.payout, 0);
+    msgEl.textContent = `Flew away at ${crashPoint.toFixed(2)}x — cashed ${fmt(total)} 🎉`;
+  } else if (entries.length) {
+    msgEl.textContent = `Flew away at ${crashPoint.toFixed(2)}x — lost ${fmt(entries.reduce((s, e) => s + e.amount, 0))}`;
+  } else {
+    msgEl.textContent = `Flew away at ${crashPoint.toFixed(2)}x`;
+  }
+
+  bets.forEach(b => { b.placed = false; });
+  save(); updateButtons();
+}
+
+function onBetButton(i) {
+  const b = bets[i];
+  if (state === 'waiting') b.placed ? cancelBet(i) : placeBet(i);
+  else if (state === 'flying') cashOut(i);
+}
+
+/* ============ UI UPDATES ============ */
+function updateBalance() { balanceEl.textContent = fmt(balance); }
+
+function renderChips() {
+  historyEl.innerHTML = '';
+  chipHistory.forEach(v => {
+    const d = document.createElement('div');
+    d.className = 'hchip ' + (v < 2 ? 'low' : v < 10 ? 'mid' : 'high');
+    d.textContent = v.toFixed(2) + 'x';
+    historyEl.appendChild(d);
+  });
+}
+
+function setTxt(el, t) { if (el.textContent !== t) el.textContent = t; }
+
+function updateButtons() {
+  for (let i = 0; i < 2; i++) {
+    const p = panelEl(i), b = bets[i], btn = p.querySelector('.bet-btn');
+    const lbl = btn.querySelector('.btn-label');
+    const sub = btn.querySelector('.btn-sub');
+    let cls = 'bet-btn', label = '', subText = '', dis = false;
+
+    if (!walletReady) {
+      cls += ' wait'; label = 'WAIT'; subText = '…'; dis = true;
+    } else if (state === 'waiting') {
+      if (b.placed) { cls += ' cancel'; label = 'CANCEL'; subText = fmtInt(b.amount); }
+      else          { cls += ' place';  label = 'BET';    subText = fmtInt(b.amount); }
+    } else if (state === 'flying') {
+      if (!b.placed)     { cls += ' wait';   label = 'NO BET';    subText = '—'; dis = true; }
+      else if (b.cashed) { cls += ' cashed'; label = 'CASHED ✓';  subText = fmt(b.payout); dis = true; }
+      else               { cls += ' cash';   label = 'CASH OUT';  subText = fmt(b.amount * mult); }
+    } else {
+      cls += ' wait'; label = 'CRASHED'; subText = '—'; dis = true;
+    }
+
+    if (btn.className !== cls) btn.className = cls;
+    if (btn.disabled !== dis) btn.disabled = dis;
+    setTxt(lbl, label); setTxt(sub, subText);
+  }
+}
+
+/* ============ BET HISTORY SHEET ============ */
+function renderSheet() {
+  if (!roundLog.length) {
+    sheetBody.innerHTML = '<div class="empty">No bets yet — place one to get started.</div>';
+    return;
+  }
+  let wagered = 0, returned = 0;
+  roundLog.forEach(r => r.entries.forEach(e => { wagered += e.amount; returned += e.payout; }));
+  const net = returned - wagered;
+
+  let html = `<div class="summary">
+    <div class="sum"><b style="color:#9a9ab8">${fmt(wagered)}</b><span>Wagered</span></div>
+    <div class="sum"><b style="color:#4ade80">${fmt(returned)}</b><span>Returned</span></div>
+    <div class="sum"><b style="color:${net >= 0 ? '#4ade80' : '#ff5b52'}">${net >= 0 ? '+' : ''}${fmt(net)}</b><span>Net</span></div>
+  </div>`;
+
+  roundLog.forEach(r => {
+    const cls = r.net > 0 ? 'up' : r.net < 0 ? 'down' : 'none';
+    const sign = r.net > 0 ? '+' : '';
+    const parts = r.entries.map(e =>
+      e.payout > 0 ? `${fmt(e.amount)} → ${e.cashedAt.toFixed(2)}x = ${fmt(e.payout)}` : `${fmt(e.amount)} → lost`
+    ).join('  •  ');
+    html += `<div class="rnd">
+      <div class="rnd-top">
+        <span class="rnd-mult" style="color:${r.mult < 2 ? '#ff5b52' : r.mult < 10 ? '#a78bfa' : '#4ade80'}">${r.mult.toFixed(2)}x</span>
+        <span class="rnd-net ${cls}">${r.net === 0 ? '—' : sign + fmt(r.net)}</span>
+      </div>
+      <div class="rnd-sub">${parts}</div>
+    </div>`;
+  });
+  sheetBody.innerHTML = html;
+}
+
+$('histBtn').addEventListener('click', () => { renderSheet(); sheet.classList.add('open'); buzz(12); });
+$('sheetClose').addEventListener('click', () => sheet.classList.remove('open'));
+sheet.addEventListener('click', e => { if (e.target === sheet) sheet.classList.remove('open'); });
+
+/* ================================================================
+   MUSIC — Procedural House Track
+   ================================================================ */
+const Music = (() => {
+  let ac = null, master = null, busFilter = null;
+  let dryGain = null, delayNode = null, delayGain = null, delayFb = null;
+  let on = false, step = 0, next = 0, timer = null;
+  let noiseBuf = null;
+  let currentIntensity = 0;
+
+  const BPM = 126;
+  const STEP_DUR = 60 / BPM / 4;   // 16th note
+  const STEPS = 64;                // 4 bars of 16 steps
+
+  const midi = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  const BARS = [
+    { root: 45, pad: [57, 60, 64], arp: [69, 72, 76, 79] }, // Am
+    { root: 41, pad: [53, 57, 60], arp: [65, 69, 72, 77] }, // F
+    { root: 48, pad: [55, 60, 64], arp: [67, 72, 76, 79] }, // C
+    { root: 43, pad: [55, 59, 62], arp: [67, 71, 74, 79] }  // G
+  ];
+
+  const KICK  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
+  const SNARE = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0];
+  const HAT   = [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0];
+  const OHAT  = [0,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,1,0];
+  const BASS  = [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0];
+  const ARP   = [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,1,0,1];
+
+  function makeNoise() {
+    const len = ac.sampleRate * 0.25;
+    const buf = ac.createBuffer(1, len, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    return buf;
+  }
+
+  function kick(t) {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(45, t + 0.09);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.95, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+    o.connect(g); g.connect(master);
+    o.start(t); o.stop(t + 0.35);
+  }
+
+  function snare(t) {
+    if (!noiseBuf) return;
+    const s = ac.createBufferSource(); s.buffer = noiseBuf;
+    const g = ac.createGain(), hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 1500;
+    g.gain.setValueAtTime(0.55, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+    s.connect(hp); hp.connect(g); g.connect(master);
+    s.start(t); s.stop(t + 0.2);
+
+    const o = ac.createOscillator(), og = ac.createGain();
+    o.type = 'triangle'; o.frequency.value = 190;
+    og.gain.setValueAtTime(0.35, t);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o.connect(og); og.connect(master);
+    o.start(t); o.stop(t + 0.14);
+  }
+
+  function hat(t, gain) {
+    if (!noiseBuf) return;
+    const s = ac.createBufferSource(); s.buffer = noiseBuf;
+    const g = ac.createGain(), hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 8000;
+    g.gain.setValueAtTime(gain, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    s.connect(hp); hp.connect(g); g.connect(master);
+    s.start(t); s.stop(t + 0.06);
+  }
+
+  function ohat(t) {
+    if (!noiseBuf) return;
+    const s = ac.createBufferSource(); s.buffer = noiseBuf;
+    const g = ac.createGain(), hp = ac.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 6500;
+    g.gain.setValueAtTime(0.28, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    s.connect(hp); hp.connect(g); g.connect(master);
+    s.start(t); s.stop(t + 0.24);
+  }
+
+  function bass(note, t, dur) {
+    const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+    o.type = 'sawtooth'; o.frequency.value = midi(note);
+    f.type = 'lowpass';
+    f.frequency.setValueAtTime(2200, t);
+    f.frequency.exponentialRampToValueAtTime(180, t + 0.22);
+    f.Q.value = 8;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.42, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(f); f.connect(g); g.connect(master);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+
+  function pad(notes, t, dur) {
+    notes.forEach((n, idx) => {
+      const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+      o.type = 'sawtooth'; o.frequency.value = midi(n);
+      o.detune.value = (idx - 1) * 6;
+      f.type = 'lowpass'; f.frequency.value = 1400; f.Q.value = 0.6;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.09, t + 0.4);
+      g.gain.setValueAtTime(0.09, t + dur * 0.7);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(f); f.connect(g); g.connect(busFilter);
+      o.start(t); o.stop(t + dur + 0.1);
+    });
+  }
+
+  function lead(note, t, dur) {
+    const o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+    o.type = 'square'; o.frequency.value = midi(note);
+    f.type = 'lowpass'; f.frequency.value = 4200; f.Q.value = 2;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.13, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(f); f.connect(g);
+    g.connect(busFilter);
+    g.connect(delayNode);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+
+  function scheduleStep(s, t) {
+    const bar = Math.floor(s / 16) % 4;
+    const j = s % 16;
+    const B = BARS[bar];
+
+    if (KICK[j])  kick(t);
+    if (SNARE[j]) snare(t);
+    if (HAT[j])   hat(t, 0.16);
+    if (OHAT[j])  ohat(t);
+
+    if (BASS[j]) {
+      const n = (j % 8 === 0) ? B.root : B.root + 7;
+      bass(n, t, 0.18);
+    }
+
+    if (ARP[j]) {
+      const idx = Math.floor(j / 4) % 4;
+      lead(B.arp[idx], t, 0.22);
+    }
+
+    if (j === 0) pad(B.pad, t, STEP_DUR * 16 * 0.95);
+  }
+
+  function tick() {
+    if (!ac) return;
+    while (next < ac.currentTime + 0.22) {
+      scheduleStep(step, next);
+      next += STEP_DUR;
+      step = (step + 1) % STEPS;
+    }
+  }
+
+  function build() {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+
+    master = ac.createGain(); master.gain.value = 0.0;
+    master.connect(ac.destination);
+
+    busFilter = ac.createBiquadFilter();
+    busFilter.type = 'lowpass';
+    busFilter.frequency.value = 3200;
+    busFilter.Q.value = 0.4;
+    busFilter.connect(master);
+
+    delayNode = ac.createDelay(1.0);
+    delayNode.delayTime.value = STEP_DUR * 3;
+    delayFb = ac.createGain(); delayFb.gain.value = 0.36;
+    delayGain = ac.createGain(); delayGain.gain.value = 0.32;
+    delayNode.connect(delayFb); delayFb.connect(delayNode);
+    delayNode.connect(delayGain); delayGain.connect(master);
+
+    noiseBuf = makeNoise();
+    next = ac.currentTime + 0.08;
+    timer = setInterval(tick, 25);
+  }
+
+  return {
+    start() {
+      if (!ac) build();
+      if (ac.state === 'suspended') ac.resume();
+      on = true;
+      const now = ac.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0.55, now + 0.6);
+      return on;
+    },
+    stop() {
+      if (!ac) return false;
+      on = false;
+      const now = ac.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0.0, now + 0.4);
+      return on;
+    },
+    toggle() { return on ? this.stop() : this.start(); },
+    isOn() { return on; },
+    setIntensity(v) {
+      if (!ac) return;
+      v = Math.max(0, Math.min(1, v));
+      if (Math.abs(v - currentIntensity) < 0.02) return;
+      currentIntensity = v;
+      const now = ac.currentTime;
+      busFilter.frequency.cancelScheduledValues(now);
+      busFilter.frequency.setTargetAtTime(2400 + v * 3400, now, 0.8);
+    }
+  };
+})();
+
+musicBtn.addEventListener('click', () => {
+  const on = Music.toggle();
+  musicBtn.textContent = on ? '🎵' : '🔇';
+  musicBtn.classList.toggle('on', on);
+  buzz(12);
+});
+
+/* ============ CANVAS — FLIGHT EFFECTS ============ */
+function drawPlane(x, y, ang) {
+  const size = Math.max(48, Math.min(80, canvas.clientWidth * 0.18));
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(ang);
+
+  // Afterburner flame
+  const flick = 0.7 + Math.random() * 0.7;
+  ctx.save();
+  ctx.shadowColor = 'rgba(255,120,0,.9)';
+  ctx.shadowBlur = 30;
+  ctx.fillStyle = 'rgba(255,170,40,.85)';
+  ctx.beginPath();
+  ctx.moveTo(-size * 0.35, -size * 0.12);
+  ctx.lineTo(-size * 0.35 - size * 0.5 * flick, 0);
+  ctx.lineTo(-size * 0.35, size * 0.12);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowBlur = 15;
+  ctx.fillStyle = 'rgba(255,255,220,.9)';
+  ctx.beginPath();
+  ctx.moveTo(-size * 0.35, -size * 0.06);
+  ctx.lineTo(-size * 0.35 - size * 0.25 * flick, 0);
+  ctx.lineTo(-size * 0.35, size * 0.06);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // 🛩️ Emoji plane
+  ctx.font = `${size}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(255,45,74,.9)';
+  ctx.shadowBlur = 20;
+  ctx.fillText('🛩️', 0, 0);
+
+  ctx.restore();
+}
+
+function draw() {
+  const now = performance.now();
+  const dt = Math.min(0.05, (now - (drawLast || now)) / 1000);
+  drawLast = now;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = canvas.clientWidth || 1, H = canvas.clientHeight || 1;
+  if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  // starfield
+  if (!stars) {
+    stars = Array.from({ length: 90 }, () => ({
+      x: Math.random(), y: Math.random(),
+      s: Math.random() * 1.6 + 0.4,
+      v: Math.random() * 0.2 + 0.05
+    }));
+  }
+  for (const s of stars) {
+    s.x -= s.v * dt * (state === 'flying' ? 2.2 : 0.5);
+    if (s.x < -0.05) { s.x += 1.05; s.y = Math.random(); s.s = Math.random() * 1.6 + 0.4; }
+    const sx = s.x * W, sy = s.y * H;
+    ctx.globalAlpha = state === 'flying' ? 0.9 : 0.45;
+    ctx.fillStyle = '#9ecbff';
+    ctx.beginPath(); ctx.arc(sx, sy, s.s, 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  const padL = 30, padR = 26, padT = 26, padB = 30;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  if (plotW <= 20 || plotH <= 20) return;
+
+  // Camera lock: plane stays at ~70% across, ~60% up
+  const tFrac = 0.70;
+  const mFrac = 0.60;
+  const tMax = Math.max(elapsed / tFrac, 4.5);
+  const mMax = 1 + Math.max(mult - 1, 0.8) / mFrac;
+
+  const px = t => padL + (t / tMax) * plotW;
+  const py = m => padT + plotH - ((m - 1) / (mMax - 1)) * plotH;
+
+  // dotted axes
+  ctx.fillStyle = 'rgba(110,160,255,.5)';
+  for (let i = 0; i <= 6; i++) {
+    const y = padT + (plotH * i) / 6;
+    ctx.beginPath(); ctx.arc(padL, y, 1.7, 0, 7); ctx.fill();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = padL + (plotW * i) / 8;
+    ctx.beginPath(); ctx.arc(x, padT + plotH, 1.7, 0, 7); ctx.fill();
+  }
+
+  if (state === 'waiting') return;
+
+  const steps = Math.min(180, Math.max(2, Math.ceil(elapsed * 26)));
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = (elapsed * i) / steps;
+    pts.push([px(t), py(Math.pow(GROW, t))]);
+  }
+
+  const g = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+  g.addColorStop(0, 'rgba(229,40,70,.34)');
+  g.addColorStop(1, 'rgba(229,40,70,.01)');
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], padT + plotH);
+  for (const p of pts) ctx.lineTo(p[0], p[1]);
+  ctx.lineTo(pts[pts.length - 1][0], padT + plotH);
+  ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+
+  ctx.beginPath();
+  pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]));
+  ctx.strokeStyle = '#ff2d4a';
+  ctx.lineWidth = 3.2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.shadowColor = 'rgba(255,45,74,.85)'; ctx.shadowBlur = 16;
+  ctx.stroke(); ctx.shadowBlur = 0;
+
+  const last = pts[pts.length - 1], prev = pts[Math.max(0, pts.length - 8)];
+
+  // Floating bobbing motion
+  const bobY = Math.sin(now * 0.0032) * 6;
+  const bobX = Math.cos(now * 0.0026) * 3;
+  const bobAng = Math.sin(now * 0.0021) * 0.07;
+
+  // Keep the plane mostly flat (slight upward pitch)
+  let ang = -0.22 + bobAng;
+
+  const planeX = last[0] + bobX;
+  const planeY = last[1] + bobY;
+
+  lastPlaneX = planeX; lastPlaneY = planeY;
+
+  // Engine exhaust
+  if (state === 'flying') {
+    const pSize = Math.max(48, Math.min(80, canvas.clientWidth * 0.18));
+    const backX = planeX + Math.cos(ang) * -pSize * 0.35;
+    const backY = planeY + Math.sin(ang) * -pSize * 0.35;
+
+    for (let k = 0; k < 2; k++) {
+      particles.push({
+        x: backX + (Math.random() - 0.5) * 6,
+        y: backY + (Math.random() - 0.5) * 6,
+        vx: -100 - Math.random() * 80,
+        vy: 15 + (Math.random() - 0.5) * 30,
+        life: 0.5, maxLife: 0.5,
+        size: Math.random() * 4 + 2,
+        hue: 15 + Math.random() * 30
+      });
+    }
+  }
+  particles = particles.filter(p => {
+    p.life -= dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    return p.life > 0;
+  });
+  for (const p of particles) {
+    const a = p.life / p.maxLife;
+    ctx.globalAlpha = a;
+    ctx.fillStyle = `hsl(${p.hue},100%,${50 + a * 30}%)`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  drawPlane(planeX, planeY, ang);
+
+  // Crash explosion
+  if (state === 'crashed') {
+    if (!explosion.length) {
+      for (let i = 0; i < 60; i++) {
+        const a2 = Math.random() * Math.PI * 2;
+        const sp = 60 + Math.random() * 240;
+        explosion.push({
+          x: lastPlaneX, y: lastPlaneY,
+          vx: Math.cos(a2) * sp, vy: Math.sin(a2) * sp,
+          life: 0.5 + Math.random() * 0.7, maxLife: 1,
+          size: Math.random() * 6 + 3,
+          hue: Math.random() * 50
+        });
+      }
+    }
+    explosion = explosion.filter(p => {
+      p.life -= dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vx *= 0.98; p.vy *= 0.98;
+      return p.life > 0;
+    });
+    for (const p of explosion) {
+      const a = Math.max(0, p.life / p.maxLife);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = `hsl(${p.hue},100%,60%)`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size * a, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  } else if (explosion.length) {
+    explosion = [];
+  }
+}
+
+/* ============ MAIN LOOP ============ */
+function loop(now) {
+  if (state === 'waiting') {
+    if (!walletReady) {
+      // Hold the round until the website has sent the wallet balance.
+      msgEl.textContent = 'Connecting to wallet…';
+      stateStart = now;
+    } else {
+      const remain = Math.max(0, WAIT_MS - (now - stateStart));
+      msgEl.textContent = 'Starting in ' + (remain / 1000).toFixed(1) + 's';
+      if (remain <= 0) startRound(now);
+    }
+  } else if (state === 'flying') {
+    elapsed = (now - stateStart) / 1000;
+    mult = Math.pow(GROW, elapsed);
+
+    if (mult >= crashPoint) {
+      mult = crashPoint;
+      elapsed = crashPoint <= 1 ? 0 : Math.log(crashPoint) / Math.log(GROW);
+      crashRound(now);
+    } else {
+      for (let i = 0; i < 2; i++) {
+        const b = bets[i];
+        if (b.placed && !b.cashed && b.mode === 'auto' && b.auto > 1.01 && mult >= b.auto) cashOut(i);
+      }
+      updateButtons();
+    }
+  } else if (state === 'crashed') {
+    if (now - stateStart > CRASH_MS) {
+      state = 'waiting'; stateStart = now; elapsed = 0; mult = 1;
+      msgEl.textContent = 'Place your bet';
+      updateButtons();
+    }
+  }
+
+  if (state === 'waiting') { multEl.textContent = '1.00x'; multEl.style.color = '#5a6480'; }
+  else if (state === 'flying') {
+    multEl.textContent = mult.toFixed(2) + 'x';
+    multEl.style.color = mult >= 10 ? '#ffd166' : mult >= 2 ? '#ff9f45' : '#ffffff';
+  } else {
+    multEl.textContent = crashPoint.toFixed(2) + 'x';
+    multEl.style.color = '#ff2d4a';
+  }
+
+  if (hostActive) {
+    if (state === 'flying') hostBadge.textContent = 'HOST · ' + crashPoint.toFixed(2) + 'x';
+    else if (state === 'waiting' && pendingCrash !== null) hostBadge.textContent = 'HOST · next ' + pendingCrash.toFixed(2) + 'x';
+    else hostBadge.textContent = 'HOST';
+  }
+
+  Music.setIntensity(state === 'flying' ? Math.min(1, (mult - 1) / 4) : 0);
+
+  draw();
+  requestAnimationFrame(loop);
+}
+
+/* ============ BOOT ============ */
+load();
+renderChips();
+updateBalance();
+updateButtons();
+ridEl.textContent = 'Round Id: ' + newRoundId();
+requestAnimationFrame(loop);
+
+if (IN_IFRAME) {
+  requestWallet();
+  // Safety net: never block the game forever if the site doesn't answer.
+  setTimeout(() => {
+    if (!walletReady) { walletReady = true; updateButtons(); }
+  }, 6000);
+}
+
+document.addEventListener('pointerdown', function once() {
+  document.removeEventListener('pointerdown', once);
+  if (!Music.isOn()) {
+    Music.start();
+    musicBtn.textContent = '🎵';
+    musicBtn.classList.add('on');
+  }
+}, { once: true });
+
+})();
+</script>
+</body>
+</html>
