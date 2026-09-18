@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crore Club Gaming — Play. Win. Earn Coins.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#E63946;
+  --red-d:#b82e3a;
+  --orange:#F4A261;
+  --orange-d:#d98a4a;
+  --bg:#1A1A1A;
+  --bg2:#1f1f1f;
+  --card:#242424;
+  --card2:#2c2c2c;
+  --line:#383838;
+  --txt:#f5f5f5;
+  --mut:#9a9a9a;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;min-height:100vh;
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#141414}
+::-webkit-scrollbar-thumb{background:#383838;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#4a4a4a}
+
+/* ---------- TOPBAR ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;
+  padding:0 20px;height:80px;
+  background:linear-gradient(180deg,#1f1f1f,#141414);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:14px;cursor:pointer;flex-shrink:0}
+.logo-box{
+  width:60px;height:60px;border-radius:50%;overflow:hidden;
+  display:grid;place-items:center;flex-shrink:0;
+  background:#1A1A1A;
+  border:2px solid var(--orange);
+  box-shadow:0 0 20px rgba(244,162,97,.35), inset 0 0 12px rgba(244,162,97,.15);
+}
+.logo-box img{width:100%;height:100%;object-fit:cover;display:block}
+.brand-text{line-height:1.05}
+.brand-name{font-weight:900;letter-spacing:2px;font-size:17px;color:var(--orange);text-shadow:0 0 10px rgba(244,162,97,.4)}
+.brand-sub{font-size:9.5px;letter-spacing:5px;color:#fff;font-weight:800;margin-top:3px;opacity:.85}
+.nav{display:flex;gap:4px;margin-left:10px}
+.nav a{padding:9px 14px;border-radius:9px;color:var(--mut);font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.nav a:hover{background:var(--card);color:var(--txt)}
+.search{flex:1;max-width:330px;margin-left:auto}
+.search input{
+  width:100%;height:40px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--txt);padding:0 14px;font-size:14px;outline:none;font-family:inherit;
+}
+.search input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(230,57,70,.15)}
+.topright{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.btn{
+  border:none;border-radius:9px;padding:10px 16px;font-size:13.5px;font-weight:800;
+  cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;
+}
+.btn.primary{background:linear-gradient(135deg,var(--red),var(--red-d));color:#fff}
+.btn.primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.ghost:hover{background:var(--card);border-color:#4a4a4a}
+.btn.gold{background:linear-gradient(135deg,var(--orange),var(--orange-d));color:#2a1a0a}
+.btn.gold:hover{filter:brightness(1.08)}
+.btn.danger{background:rgba(230,57,70,.15);color:var(--red);border:1px solid rgba(230,57,70,.35)}
+.btn.danger:hover{background:rgba(230,57,70,.28)}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:8px}
+
+/* ---------- COIN / BALANCE ---------- */
+.balance{
+  display:flex;align-items:center;gap:7px;background:var(--card);
+  border:1px solid var(--line);padding:9px 14px;border-radius:10px;
+  font-weight:900;color:var(--orange);font-size:14px;
+}
+.tk{
+  font-size:16px;line-height:1;
+  filter:drop-shadow(0 0 6px rgba(244,162,97,.55));
+}
+.tk.lg{font-size:22px}
+.tk.xl{font-size:34px}
+.userbox{
+  display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+  padding:6px 12px 6px 6px;border-radius:30px;cursor:pointer;font-weight:700;font-size:13.5px;transition:.15s;
+}
+.userbox:hover{border-color:var(--red)}
+.avatar{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--red),var(--orange));color:#1A1A1A;font-weight:900;font-size:13px;
+}
+
+/* ---------- LAYOUT ---------- */
+.layout{display:flex;gap:22px;max-width:1500px;margin:0 auto;padding:22px 20px 70px}
+.sidebar{width:212px;flex:0 0 212px;position:sticky;top:102px;align-self:flex-start;max-height:calc(100vh - 110px);overflow:auto}
+.side-title{font-size:10.5px;letter-spacing:1.6px;color:var(--mut);font-weight:900;margin:0 0 10px 10px;text-transform:uppercase}
+.side-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+  color:var(--mut);font-weight:600;font-size:14px;cursor:pointer;margin-bottom:2px;transition:.15s;
+}
+.side-item:hover{background:var(--card);color:var(--txt)}
+.side-item.on{
+  background:linear-gradient(90deg,rgba(230,57,70,.18),transparent);
+  color:var(--red);box-shadow:inset 3px 0 0 var(--red);
+}
+.side-promo{
+  margin-top:18px;padding:16px;border-radius:14px;border:1px solid rgba(244,162,97,.3);
+  background:linear-gradient(135deg,rgba(244,162,97,.10),rgba(244,162,97,.02));
+}
+.side-promo h4{font-size:13px;font-weight:900;color:var(--orange);margin-bottom:6px}
+.side-promo p{font-size:11.5px;color:var(--mut);line-height:1.5}
+.main{flex:1;min-width:0}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;border-radius:18px;overflow:hidden;padding:46px 42px;
+  background:
+    radial-gradient(900px 320px at 12% 15%,rgba(230,57,70,.28),transparent 62%),
+    radial-gradient(700px 320px at 88% 85%,rgba(244,162,97,.18),transparent 62%),
+    linear-gradient(135deg,#242424,#1A1A1A);
+  border:1px solid var(--line);margin-bottom:10px;
+}
+.hero-badge{
+  display:inline-block;background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.35);
+  color:var(--red);font-size:11.5px;font-weight:800;letter-spacing:.6px;
+  padding:6px 13px;border-radius:20px;margin-bottom:16px;
+}
+.hero h1{font-size:40px;font-weight:900;line-height:1.1;letter-spacing:-1px;margin-bottom:12px}
+.hero h1 span{background:linear-gradient(90deg,var(--red),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);font-size:15px;max-width:540px;line-height:1.6;margin-bottom:24px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-btns .btn{padding:12px 22px;font-size:14px}
+
+/* ---------- CHIPS (mobile) ---------- */
+.chips{display:none;gap:8px;overflow-x:auto;padding:14px 0 4px;margin-bottom:6px}
+.chip{
+  background:var(--card);border:1px solid var(--line);color:var(--mut);
+  padding:8px 14px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;
+  white-space:nowrap;font-family:inherit;
+}
+.chip.on{background:rgba(230,57,70,.15);border-color:var(--red);color:var(--red)}
+
+/* ---------- GRID ---------- */
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:26px 0 16px}
+.section-head h2{font-size:19px;font-weight:900}
+.muted{color:var(--mut);font-size:13px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:16px}
+.gcard{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:.18s;
+}
+.gcard:hover{transform:translateY(-4px);border-color:rgba(230,57,70,.55);box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.gthumb{position:relative;aspect-ratio:16/10;background:#141414;overflow:hidden}
+.gthumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.3s}
+.gcard:hover .gthumb img{transform:scale(1.06)}
+.gtag{
+  position:absolute;top:9px;left:9px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+  padding:4px 10px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:.7px;
+  color:var(--orange);text-transform:uppercase;
+}
+.gcost{
+  position:absolute;top:9px;right:9px;background:rgba(230,57,70,.94);color:#fff;
+  padding:5px 11px;border-radius:20px;font-size:10.5px;font-weight:900;letter-spacing:.4px;
+  display:flex;align-items:center;gap:4px;
+}
+.gcost .tk{font-size:13px}
+.empty{
+  grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mut);
+  border:1px dashed var(--line);border-radius:16px;
+}
+.empty b{display:block;font-size:17px;color:var(--txt);margin-bottom:8px}
+
+/* ---------- MODAL ---------- */
+.overlay{
+  position:fixed;inset:0;background:rgba(10,10,10,.85);backdrop-filter:blur(6px);
+  z-index:100;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.on{display:flex}
+.modal{
+  background:linear-gradient(180deg,#242424,#1c1c1c);border:1px solid var(--line);
+  border-radius:16px;width:100%;max-width:440px;max-height:92vh;overflow:auto;
+  box-shadow:0 30px 90px rgba(0,0,0,.8);animation:pop .2s ease;
+}
+@keyframes pop{from{transform:scale(.96);opacity:0}}
+.modal.wide{max-width:980px}
+.modal.fullscreen{
+  max-width:100vw;width:100vw;height:100dvh;max-height:100dvh;
+  border-radius:0;margin:0;display:flex;flex-direction:column;
+}
+.overlay.fullscreen{padding:0;align-items:stretch;justify-content:stretch}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 22px;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:#242424;z-index:2;
+}
+.modal-head h2{font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.x{background:none;border:none;color:var(--mut);font-size:19px;cursor:pointer;line-height:1;padding:4px}
+.x:hover{color:var(--txt)}
+.modal-body{padding:22px}
+.modal.fullscreen .modal-body{
+  padding:0 !important;margin:0;flex:1 1 auto;min-height:0;overflow:auto;
+  display:flex;flex-direction:column;
+}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11.5px;font-weight:800;color:var(--mut);margin-bottom:6px;letter-spacing:.4px;text-transform:uppercase}
+.field input,.field select,.field textarea{
+  width:100%;height:44px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;color:var(--txt);padding:0 14px;font-size:14px;outline:none;font-family:inherit;
+}
+.field textarea{height:78px;padding:12px 14px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(230,57,70,.13)}
+.field input[type=file]{padding:11px 14px;height:auto;font-size:12.5px;color:var(--mut)}
+.field input:disabled{opacity:.55}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tabs{display:flex;gap:7px;padding:14px 22px 0;flex-wrap:wrap}
+.tabs button{
+  background:transparent;border:1px solid var(--line);color:var(--mut);
+  padding:8px 15px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s;
+}
+.tabs button:hover{color:var(--txt)}
+.tabs button.on{background:rgba(230,57,70,.15);border-color:var(--red);color:var(--red)}
+
+/* ---------- TABLES & STATS ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{
+  text-align:left;color:var(--mut);font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;
+  padding:10px 12px;border-bottom:1px solid var(--line);font-weight:900;
+}
+.tbl td{padding:11px 12px;border-bottom:1px solid rgba(56,56,56,.55);vertical-align:middle}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat .k{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:1.1px;font-weight:900;margin-bottom:8px}
+.stat .v{font-size:25px;font-weight:900;color:var(--red)}
+.stat .v.gold{color:var(--orange)}
+.stat .v.blue{color:var(--orange)}
+.pill{font-size:10px;font-weight:900;padding:4px 10px;border-radius:20px;background:var(--card2);color:var(--mut);text-transform:uppercase;letter-spacing:.6px}
+.pill.gold{background:rgba(244,162,97,.18);color:var(--orange)}
+.pill.green{background:rgba(244,162,97,.18);color:var(--orange)}
+.pill.blue{background:rgba(230,57,70,.18);color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:24px}
+.panel h3{font-size:15px;font-weight:900;margin-bottom:16px}
+hr{border:0;border-top:1px solid var(--line);margin:22px 0}
+code{
+  background:#141414;border:1px solid var(--line);border-radius:6px;padding:2px 7px;
+  font-size:12.5px;color:var(--orange);font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+pre{
+  background:#141414;border:1px solid var(--line);border-radius:12px;padding:16px;
+  overflow:auto;font-size:12.5px;line-height:1.65;color:#c9c9c9;
+  font-family:ui-monospace,Menlo,Consolas,monospace;
+}
+
+/* ---------- GAME FRAME ---------- */
+.modal.fullscreen.playing .modal-head{display:none!important}
+.modal.fullscreen.playing .gbar{display:none!important}
+.fs-close{position:absolute;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:9999;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:16px;line-height:1;display:grid;place-items:center;cursor:pointer;opacity:.7;padding:0;font-family:inherit}
+.fs-close:active{opacity:1}
+.gamewrap{position:relative;background:#000}
+.gameframe{width:100%;height:100vh;border:0;display:block;background:#000}
+.modal.fullscreen .gamewrap{flex:1 1 auto;min-height:0;width:100%;height:auto}
+.modal.fullscreen .gameframe{width:100%;height:100%;min-height:0;border:0;display:block}
+.gbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 18px;background:#1c1c1c;border-bottom:1px solid var(--line);
+  font-size:12.5px;font-weight:700;color:var(--mut);flex-wrap:wrap;flex:0 0 auto;
+}
+.gbar .live{display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 9px var(--red);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.35}}
+.gbar b{color:var(--orange);font-size:15px}
+.noGame{
+  padding:70px 30px;text-align:center;color:var(--mut);
+  background:radial-gradient(600px 300px at 50% 0%,rgba(230,57,70,.10),transparent),#141414;
+}
+.noGame .big{font-size:48px;margin-bottom:16px}
+.noGame h3{color:var(--txt);font-size:18px;margin-bottom:8px;font-weight:900}
+.noGame p{font-size:13.5px;max-width:440px;margin:0 auto;line-height:1.6}
+
+/* ---------- TOAST ---------- */
+#toasts{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:10px}
+.toast{
+  background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--orange);
+  padding:13px 18px;border-radius:10px;font-size:13.5px;font-weight:700;
+  animation:slideIn .25s ease;min-width:230px;max-width:340px;
+  box-shadow:0 12px 34px rgba(0,0,0,.7);
+}
+.toast.err{border-left-color:var(--red)}
+.toast.gold{border-left-color:var(--orange)}
+@keyframes slideIn{from{transform:translateX(34px);opacity:0}}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:1080px){.sidebar{display:none}.nav{display:none}.chips{display:flex}}
+@media(max-width:820px){.search{display:none}}
+@media(max-width:640px){
+  .topbar{height:auto;padding:12px 14px;flex-wrap:wrap;gap:10px}
+  .brand-sub{display:none}
+  .topright{width:100%;justify-content:flex-end}
+  .layout{padding:16px 14px 60px}
+  .hero{padding:30px 22px}
+  .hero h1{font-size:27px}
+  .hero p{font-size:13.5px}
+  .row2{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .modal-body{padding:16px}
+  .tabs{padding:12px 16px 0}
+  #toasts{left:14px;right:14px;bottom:14px}
+  .logo-box{width:48px;height:48px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= TOPBAR ================= -->
+<header class="topbar">
+  <div class="brand" onclick="setCat('All')">
+    <div class="logo-box">
+      <img id="brandLogoImg" alt="Crore Club"
+           src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
+             <defs>
+               <linearGradient id='gold' x1='0' y1='0' x2='0' y2='1'>
+                 <stop offset='0%' stop-color='%23FFD700'/>
+                 <stop offset='100%' stop-color='%23B8860B'/>
+               </linearGradient>
+               <linearGradient id='silver' x1='0' y1='0' x2='0' y2='1'>
+                 <stop offset='0%' stop-color='%23F0F0F0'/>
+                 <stop offset='100%' stop-color='%23A9A9A9'/>
+               </linearGradient>
+             </defs>
+             <circle cx='100' cy='100' r='95' fill='%231A1A1A' stroke='%23F4A261' stroke-width='4'/>
+             <path d='M60 70 L70 40 L85 60 L100 30 L115 60 L130 40 L140 70 Z' fill='url(%23gold)' stroke='%23B8860B' stroke-width='2'/>
+             <circle cx='70' cy='40' r='4' fill='%23FFD700'/><circle cx='100' cy='30' r='5' fill='%23FFD700'/><circle cx='130' cy='40' r='4' fill='%23FFD700'/>
+             <polygon points='100,55 108,68 100,80 92,68' fill='%23E63946' stroke='%23fff' stroke-width='1'/>
+             <text x='100' y='120' font-family='Arial Black,sans-serif' font-size='26' font-weight='900' fill='url(%23gold)' text-anchor='middle'>CRORE</text>
+             <text x='100' y='150' font-family='Arial Black,sans-serif' font-size='26' font-weight='900' fill='url(%23silver)' text-anchor='middle'>CLUB</text>
+             <circle cx='55' cy='170' r='14' fill='url(%23gold)' stroke='%23B8860B' stroke-width='2'/>
+             <text x='55' y='175' font-family='Arial' font-size='14' font-weight='bold' fill='%231A1A1A' text-anchor='middle'>₹</text>
+             <circle cx='145' cy='170' r='14' fill='url(%23gold)' stroke='%23B8860B' stroke-width='2'/>
+             <text x='145' y='175' font-family='Arial' font-size='14' font-weight='bold' fill='%231A1A1A' text-anchor='middle'>₹</text>
+           </svg>">
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">CRORE CLUB</div>
+      <div class="brand-sub">GAMING</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a class="on" onclick="setCat('All')">Home</a>
+    <a onclick="setCat('All');scrollToGames()">Games</a>
+    <a onclick="openProfile()">My Wallet</a>
+  </nav>
+
+  <div class="search">
+    <input id="searchInput" placeholder="🔍  Search games..." oninput="onSearch(this.value)">
+  </div>
+
+  <div class="topright" id="topright"></div>
+</header>
+
+<!-- ================= LAYOUT ================= -->
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-title">Categories</div>
+    <div id="sideCats"></div>
+    <div class="side-promo">
+      <h4><span class="tk">💶</span> COIN SYSTEM</h4>
+      <p>Coins are issued by the host. Your wallet balance is loaded into the game when you play, and returned to your wallet when you cash out.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="hero">
+      <div class="hero-badge">🔥 THE COIN GAMING ARENA</div>
+      <h1>Play. Compete. Win <span>Crore Coins</span></h1>
+      <p>Log in, collect your 💶 coins from the host and hit play. Your whole wallet is loaded straight into the game — when you cash out, whatever you have left goes right back to your wallet.</p>
+      <div class="hero-btns">
+        <button class="btn primary" onclick="scrollToGames()">🎮 Browse Games</button>
+        <button class="btn ghost" onclick="openProfile()"><span class="tk">💶</span> My Wallet</button>
+      </div>
+    </section>
+
+    <div class="chips" id="chipCats"></div>
+
+    <div class="section-head">
+      <h2 id="gridTitle">All Games</h2>
+      <span class="muted" id="gridCount"></span>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* =========================================================
+   CROCE CLUB GAMING — core engine
+   ========================================================= */
+
+/* ---------- helpers ---------- */
+const $  = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const hash = s => btoa(unescape(encodeURIComponent('ccg$' + s)));
+const fmt = n => Number(n).toLocaleString('en-IN');
+const TK = '<span class="tk">💶</span>';
+
+const LS = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){ toast('Storage full!','err'); } }
+};
+
+function toast(msg, type = 'ok'){
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type === 'ok' ? '' : type);
+  t.innerHTML = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(() => {
+    t.style.transition = '.3s'; t.style.opacity = '0'; t.style.transform = 'translateX(34px)';
+    setTimeout(() => t.remove(), 300);
+  }, 2800);
+}
+
+/* ---------- constants ---------- */
+const CATS = ['Arcade','Action','Puzzle','Sports','Racing','Casino','Adventure','Strategy','Other'];
+const MIN_BET = 1;
+
+/* =========================================================
+   AUTO THUMBNAIL GENERATOR
+   ========================================================= */
+function generateThumb(title, cat){
+  const t = (title || '').toLowerCase();
+  const c = (cat || '').toLowerCase();
+
+  let theme = 'default';
+  if (t.includes('aviator') || t.includes('plane') || t.includes('flight')) theme = 'aviator';
+  else if (t.includes('coin') || t.includes('flip')) theme = 'coin';
+  else if (t.includes('spin') || t.includes('wheel') || t.includes('lucky')) theme = 'wheel';
+  else if (t.includes('dragon') || t.includes('fire')) theme = 'dragon';
+  else if (t.includes('cricket') || t.includes('bat') || t.includes('ball')) theme = 'cricket';
+  else if (t.includes('racer') || t.includes('car') || t.includes('speed') || c === 'racing') theme = 'racer';
+  else if (t.includes('puzzle') || t.includes('block')) theme = 'puzzle';
+  else if (t.includes('card') || t.includes('poker') || c === 'casino') theme = 'cards';
+
+  const bg = `<defs>
+    <linearGradient id='bgGrad' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0%' stop-color='#242424'/>
+      <stop offset='100%' stop-color='#1A1A1A'/>
+    </linearGradient>
+    <linearGradient id='goldGrad' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0%' stop-color='#F4A261'/>
+      <stop offset='100%' stop-color='#E63946'/>
+    </linearGradient>
+    <linearGradient id='redGrad' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0%' stop-color='#E63946'/>
+      <stop offset='100%' stop-color='#b82e3a'/>
+    </linearGradient>
+  </defs>
+  <rect width='400' height='250' fill='url(#bgGrad)'/>
+  <circle cx='200' cy='250' r='180' fill='%23E63946' opacity='0.08'/>`;
+
+  let art = '';
+  if (theme === 'aviator') {
+    art = `
+      <path d='M50 180 Q150 180 220 100 T380 40' stroke='%23F4A261' stroke-width='4' fill='none' stroke-dasharray='8 6'/>
+      <path d='M180 80 L260 60 L230 95 L260 130 L180 110 Z' fill='url(#redGrad)'/>
+      <path d='M180 80 L130 95 L180 110 Z' fill='%23E63946'/>
+      <circle cx='360' cy='40' r='12' fill='%23F4A261'/><text x='360' y='45' font-size='12' font-weight='bold' fill='%231A1A1A' text-anchor='middle'>3x</text>`;
+  } else if (theme === 'coin') {
+    art = `
+      <circle cx='200' cy='120' r='70' fill='url(#goldGrad)' stroke='#B8860B' stroke-width='4'/>
+      <circle cx='200' cy='120' r='58' fill='none' stroke='#1A1A1A' stroke-width='2' stroke-dasharray='4 4'/>
+      <text x='200' y='140' font-family='Arial Black,sans-serif' font-size='54' font-weight='900' fill='#1A1A1A' text-anchor='middle'>₹</text>
+      <text x='90' y='60' font-size='22' font-weight='bold' fill='%23F4A261' opacity='0.7'>H</text>
+      <text x='290' y='60' font-size='22' font-weight='bold' fill='%23F4A261' opacity='0.7'>T</text>`;
+  } else if (theme === 'wheel') {
+    art = `
+      <circle cx='200' cy='125' r='85' fill='none' stroke='url(#goldGrad)' stroke-width='12'/>
+      <circle cx='200' cy='125' r='65' fill='none' stroke='%23E63946' stroke-width='6'/>
+      <line x1='200' y1='40' x2='200' y2='125' stroke='%23F4A261' stroke-width='4'/>
+      <line x1='200' y1='125' x2='245' y2='90' stroke='%23E63946' stroke-width='4'/>
+      <line x1='200' y1='125' x2='155' y2='160' stroke='%23F4A261' stroke-width='4'/>
+      <circle cx='200' cy='125' r='12' fill='%23F4A261'/>
+      <polygon points='200,30 195,45 205,45' fill='%23E63946'/>`;
+  } else if (theme === 'dragon') {
+    art = `
+      <path d='M100 180 Q150 100 200 140 Q250 180 300 100' stroke='%23E63946' stroke-width='14' fill='none' stroke-linecap='round'/>
+      <path d='M100 180 Q150 100 200 140 Q250 180 300 100' stroke='%23F4A261' stroke-width='6' fill='none' stroke-linecap='round' stroke-dasharray='10 8'/>
+      <circle cx='300' cy='100' r='18' fill='%23F4A261'/><circle cx='306' cy='94' r='4' fill='%231A1A1A'/>
+      <path d='M280 85 L295 75 L300 90 Z' fill='%23E63946'/>`;
+  } else if (theme === 'cricket') {
+    art = `
+      <rect x='170' y='60' width='14' height='110' rx='4' fill='url(#goldGrad)' transform='rotate(20 177 115)'/>
+      <circle cx='240' cy='140' r='18' fill='%23E63946'/>
+      <path d='M232 130 Q240 120 248 130' stroke='%23F4A261' stroke-width='2' fill='none'/>
+      <rect x='120' y='170' width='10' height='30' fill='%23F4A261'/>
+      <rect x='135' y='170' width='10' height='30' fill='%23F4A261'/>
+      <rect x='150' y='170' width='10' height='30' fill='%23F4A261'/>`;
+  } else if (theme === 'racer') {
+    art = `
+      <path d='M80 160 L120 130 L280 130 L320 160 Z' fill='url(#redGrad)'/>
+      <path d='M140 130 L160 100 L240 100 L260 130 Z' fill='%23F4A261'/>
+      <circle cx='130' cy='165' r='18' fill='%231A1A1A' stroke='%23F4A261' stroke-width='3'/>
+      <circle cx='270' cy='165' r='18' fill='%231A1A1A' stroke='%23F4A261' stroke-width='3'/>
+      <path d='M60 180 L110 180 M290 180 L340 180' stroke='%23F4A261' stroke-width='6' stroke-linecap='round'/>
+      <path d='M50 150 L90 150 M310 150 L350 150' stroke='%23E63946' stroke-width='4' stroke-linecap='round'/>`;
+  } else if (theme === 'puzzle') {
+    art = `
+      <rect x='120' y='60' width='50' height='50' rx='6' fill='%23E63946'/>
+      <rect x='175' y='60' width='50' height='50' rx='6' fill='%23F4A261'/>
+      <rect x='230' y='60' width='50' height='50' rx='6' fill='%23E63946'/>
+      <rect x='120' y='115' width='50' height='50' rx='6' fill='%23F4A261'/>
+      <rect x='175' y='115' width='50' height='50' rx='6' fill='%23E63946'/>
+      <rect x='230' y='115' width='50' height='50' rx='6' fill='%23F4A261'/>
+      <rect x='120' y='170' width='50' height='50' rx='6' fill='%23E63946'/>
+      <rect x='175' y='170' width='50' height='50' rx='6' fill='%23F4A261'/>
+      <rect x='230' y='170' width='50' height='50' rx='6' fill='%23E63946'/>`;
+  } else if (theme === 'cards') {
+    art = `
+      <rect x='130' y='50' width='70' height='100' rx='8' fill='%23fff' transform='rotate(-15 165 100)'/>
+      <text x='150' y='90' font-size='28' fill='%23E63946' transform='rotate(-15 165 100)'>A</text>
+      <rect x='180' y='70' width='70' height='100' rx='8' fill='%23fff' transform='rotate(10 215 120)'/>
+      <text x='205' y='115' font-size='28' fill='%23E63946' transform='rotate(10 215 120)'>K</text>
+      <circle cx='300' cy='180' r='22' fill='url(#goldGrad)'/>
+      <text x='300' y='188' font-size='22' font-weight='bold' fill='%231A1A1A' text-anchor='middle'>₹</text>`;
+  } else {
+    art = `
+      <polygon points='200,60 220,110 275,110 230,145 245,200 200,170 155,200 170,145 125,110 180,110' fill='url(#goldGrad)'/>
+      <circle cx='200' cy='130' r='30' fill='%231A1A1A' opacity='0.4'/>`;
+  }
+
+  const displayTitle = esc(title).substring(0, 18).toUpperCase();
+  const text = `
+    <rect x='0' y='210' width='400' height='40' fill='rgba(0,0,0,0.65)'/>
+    <text x='200' y='236' font-family='Arial Black,sans-serif' font-size='16' font-weight='900'
+          fill='%23F4A261' text-anchor='middle' letter-spacing='1'>${displayTitle}</text>`;
+
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250' viewBox='0 0 400 250'>${bg}${art}${text}</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+/* ---------- data ---------- */
+let users = LS.get('ccg_users', null);
+if (!Array.isArray(users) || !users.length) {
+  users = [{ u:'admin', p:hash('admin123'), role:'admin', coins:1000000, joined:Date.now() }];
+  LS.set('ccg_users', users);
+}
+users.forEach(u => { if (typeof u.tokens === 'number' && typeof u.coins !== 'number') { u.coins = u.tokens; delete u.tokens; } });
+
+let games = LS.get('ccg_games', null);
+if (!Array.isArray(games) || !games.length) {
+  games = [
+    { id:uid(), title:'Coin Flip', cat:'Casino', img:'', url:'', builtin:true, desc:'Bet any amount and double it on a coin toss.', plays:0 },
+    { id:uid(), title:'Lucky Spin', cat:'Casino', img:'', url:'', desc:'Spin the wheel and win coin multipliers.', plays:0 },
+    { id:uid(), title:'Dragon Rush', cat:'Arcade', img:'', url:'', desc:'Endless runner — dodge the flames and collect coins.', plays:0 },
+    { id:uid(), title:'Cricket Blitz', cat:'Sports', img:'', url:'', desc:'Smash sixes in this quick-fire cricket challenge.', plays:0 },
+    { id:uid(), title:'Neon Racer', cat:'Racing', img:'', url:'', desc:'High-speed neon circuit racing against the clock.', plays:0 },
+    { id:uid(), title:'Block Puzzle', cat:'Puzzle', img:'', url:'', desc:'Classic block-fitting brain teaser.', plays:0 }
+  ];
+  LS.set('ccg_games', games);
+}
+games = games.filter(g => g.title && g.title.toLowerCase() !== 'aviator');
+
+let txs = LS.get('ccg_tx', []);
+let session = LS.get('ccg_session', null);
+
+/* active game session: coins moved OUT of the wallet and INTO the game */
+let playSession = LS.get('ccg_play', null);
+
+function save(){
+  LS.set('ccg_users', users);
+  LS.set('ccg_games', games);
+  LS.set('ccg_tx', txs);
+  LS.set('ccg_session', session);
+  LS.set('ccg_play', playSession);
+}
+
+/* ---------- session helpers ---------- */
+const currentUser = () => users.find(x => x.u === session) || null;
+const isAdmin = () => { const m = currentUser(); return !!m && m.role === 'admin'; };
+const getUser = u => users.find(x => x.u === u);
+
+function addTx(user, amt, note){
+  txs.push({ id:uid(), u:user, amt, note, t:Date.now() });
+  if (txs.length > 1000) txs = txs.slice(-1000);
+}
+
+/* ---------- thumbnail resolver ---------- */
+function thumb(g){
+  if (g.img && g.img.trim()) return g.img;
+  return generateThumb(g.title, g.cat);
+}
+
+/* ---------- modal ---------- */
+function modal(html, cls = ''){
+  const o = $('#overlay'), m = $('#modal');
+  m.className = 'modal ' + cls;
+  o.className = 'overlay on' + (cls.indexOf('fullscreen') !== -1 ? ' fullscreen' : '');
+  m.innerHTML = html;
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  endPlaySession();          // return whatever is left in the game back to the wallet
+  activeGame = null;
+  const o = $('#overlay'), m = $('#modal');
+  o.className = 'overlay';
+  m.className = 'modal';
+  m.innerHTML = '';
+  document.body.style.overflow = '';
+  renderTop(); renderGames();
+}
+
+/* =========================================================
+   RENDERING
+   ========================================================= */
+let filter = { cat: 'All', q: '' };
+let activeGame = null;
+
+function renderTop(){
+  const el = $('#topright');
+  const me = currentUser();
+  if (!me) {
+    el.innerHTML = `
+      <button class="btn ghost" onclick="openAuth('login')">Log In</button>
+      <button class="btn primary" onclick="openAuth('register')">Register</button>`;
+    return;
+  }
+  const inPlay = (playSession && playSession.u === me.u) ? Math.max(0, Math.floor(playSession.balance || 0)) : 0;
+  el.innerHTML = `
+    <div class="balance" title="Your wallet balance">${TK} ${fmt(me.coins)}${
+      inPlay ? `<span style="color:var(--mut);font-weight:700;font-size:11.5px;letter-spacing:.2px">· in game ${fmt(inPlay)}</span>` : ''}</div>
+    <div class="userbox" onclick="openProfile()">
+      <div class="avatar">${esc(me.u[0].toUpperCase())}</div>
+      <span>${esc(me.u)}</span>
+    </div>
+    ${me.role === 'admin' ? `<button class="btn gold" onclick="openAdmin()">🎛️ Host</button>` : ''}
+    <button class="btn ghost" onclick="logout()">Exit</button>`;
+}
+
+function renderCats(){
+  const all = ['All', ...CATS];
+  $('#sideCats').innerHTML = all.map(c =>
+    `<div class="side-item ${filter.cat === c ? 'on' : ''}" onclick="setCat('${c}')">
+       <span>${c === 'All' ? '🏠' : '🎯'}</span> ${c}
+     </div>`).join('');
+  $('#chipCats').innerHTML = all.map(c =>
+    `<button class="chip ${filter.cat === c ? 'on' : ''}" onclick="setCat('${c}')">${c}</button>`).join('');
+}
+
+function renderGames(){
+  const q = filter.q.toLowerCase();
+  const list = games.filter(g =>
+    (filter.cat === 'All' || g.cat === filter.cat) &&
+    (!q || g.title.toLowerCase().includes(q) || (g.cat || '').toLowerCase().includes(q))
+  );
+
+  $('#gridTitle').textContent = filter.cat === 'All' ? 'All Games' : filter.cat + ' Games';
+  $('#gridCount').textContent = list.length + ' game' + (list.length === 1 ? '' : 's');
+
+  if (!list.length) {
+    $('#grid').innerHTML = `<div class="empty">
+      <b>No games here yet</b>
+      ${isAdmin() ? 'Use the Host Panel to add your first game.' : 'Check back soon — the host is loading new games.'}
+    </div>`;
+    return;
+  }
+
+  $('#grid').innerHTML = list.map(g => `
+    <div class="gcard" onclick="openGame('${g.id}')">
+      <div class="gthumb">
+        <img src="${thumb(g)}" alt="${esc(g.title)}" loading="lazy">
+        <span class="gtag">${esc(g.cat)}</span>
+        <span class="gcost"><span class="tk">💶</span> COIN PLAY</span>
+      </div>
+      <div class="ginfo" style="padding:13px 14px">
+        <div class="gtitle" style="font-weight:800;font-size:14.5px;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(g.title)}</div>
+        <div class="gplay" style="font-size:12px;color:var(--mut);font-weight:600;display:flex;justify-content:space-between">
+          <span>▶ Play now</span><span>${fmt(g.plays || 0)} plays</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderAll(){ renderTop(); renderCats(); renderGames(); }
+
+/* =========================================================
+   NAV / FILTER
+   ========================================================= */
+function setCat(c){ filter.cat = c; renderCats(); renderGames(); }
+function onSearch(v){ filter.q = v; renderGames(); }
+function scrollToGames(){ $('#grid').scrollIntoView({ behavior:'smooth', block:'start' }); }
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+function openAuth(mode = 'login'){
+  modal(`
+    <div class="modal-head">
+      <h2>${mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>
+      <button class="x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Username</label>
+        <input id="au" autocomplete="username" placeholder="yourname" maxlength="16">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="ap" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      ${mode === 'register' ? `
+      <div class="field">
+        <label>Confirm Password</label>
+        <input id="ap2" type="password" placeholder="••••••••">
+      </div>` : ''}
+      <button class="btn primary" style="width:100%;height:46px;margin-top:6px"
+        onclick="${mode === 'login' ? 'doLogin()' : 'doRegister()'}">
+        ${mode === 'login' ? 'Log In' : 'Create Account'}
+      </button>
+      <p style="text-align:center;margin-top:16px;color:var(--mut);font-size:13px">
+        ${mode === 'login'
+          ? `No account yet? <a onclick="openAuth('register')" style="color:var(--red);cursor:pointer;font-weight:800">Register</a>`
+          : `Already registered? <a onclick="openAuth('login')" style="color:var(--red);cursor:pointer;font-weight:800">Log in</a>`}
+      </p>
+      ${mode === 'register' ? `<p style="text-align:center;margin-top:10px;color:var(--mut);font-size:12px">
+        You'll start with <b style="color:var(--orange)">💶 0 coins</b> — the host will credit you.</p>` : ''}
+    </div>`);
+  setTimeout(() => $('#au')?.focus(), 60);
+}
+
+function doLogin(){
+  const u = $('#au').value.trim();
+  const p = $('#ap').value;
+  if (!u || !p) return toast('Enter username and password', 'err');
+  const user = users.find(x => x.u.toLowerCase() === u.toLowerCase());
+  if (!user || user.p !== hash(p)) return toast('Invalid username or password', 'err');
+  session = user.u; save(); closeModal(); renderAll();
+  toast('Welcome back, ' + user.u + '! 🎮');
+}
+
+function doRegister(){
+  const u = $('#au').value.trim();
+  const p = $('#ap').value;
+  const p2 = $('#ap2').value;
+  if (!/^[A-Za-z0-9_]{3,16}$/.test(u)) return toast('Username: 3–16 letters, numbers or _', 'err');
+  if (p.length < 4) return toast('Password must be at least 4 characters', 'err');
+  if (p !== p2) return toast('Passwords do not match', 'err');
+  if (users.some(x => x.u.toLowerCase() === u.toLowerCase())) return toast('That username is taken', 'err');
+
+  users.push({ u, p: hash(p), role:'player', coins: 0, joined: Date.now() });
+  session = u; save(); closeModal(); renderAll();
+  toast('Account created! Ask the host for coins 💶', 'gold');
+}
+
+function logout(){
+  session = null; save(); renderAll(); closeModal();
+  toast('Logged out');
+}
+
+/* =========================================================
+   WALLET / PROFILE
+   ========================================================= */
+function openProfile(){
+  const me = currentUser();
+  if (!me) { openAuth('login'); return; }
+
+  const mine = txs.filter(t => t.u === me.u).slice(-25).reverse();
+
+  modal(`
+    <div class="modal-head">
+      <h2>My Wallet</h2>
+      <button class="x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+        <div class="avatar" style="width:56px;height:56px;font-size:22px">${esc(me.u[0].toUpperCase())}</div>
+        <div>
+          <div style="font-weight:900;font-size:18px">${esc(me.u)}</div>
+          <div style="color:var(--mut);font-size:12.5px">${me.role === 'admin' ? 'Host / Administrator' : 'Player'} · joined ${new Date(me.joined).toLocaleDateString()}</div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,rgba(244,162,97,.14),rgba(244,162,97,.02));
+                  border:1px solid rgba(244,162,97,.3);border-radius:14px;padding:20px;text-align:center;margin-bottom:18px">
+        <div style="font-size:10.5px;letter-spacing:1.4px;color:var(--mut);font-weight:900;text-transform:uppercase">Coin Balance</div>
+        <div style="font-size:38px;font-weight:900;color:var(--orange);margin:6px 0">
+          <span class="tk xl">💶</span> ${fmt(me.coins)}
+        </div>
+        <p style="color:var(--mut);font-size:12px;margin-top:6px">Coins are issued by the host.</p>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:900;margin-bottom:12px">Recent Transactions</h3>
+      ${mine.length ? `
+      <table class="tbl">
+        <thead><tr><th>Date</th><th>Note</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>
+          ${mine.map(t => `<tr>
+            <td style="color:var(--mut)">${new Date(t.t).toLocaleDateString()}</td>
+            <td>${esc(t.note)}</td>
+            <td style="text-align:right;font-weight:900;color:${t.amt >= 0 ? 'var(--orange)' : 'var(--red)'}">
+              ${t.amt >= 0 ? '+' : ''}${fmt(t.amt)} <span class="tk">💶</span>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>` : `<p style="color:var(--mut);font-size:13.5px">No transactions yet.</p>`}
+    </div>`);
+}
+
+/* =========================================================
+   COIN BRIDGE — games bet & win coins through here
+   ========================================================= */
+function updateGameUI(){
+  const bal = playSession ? Math.max(0, Math.floor(playSession.balance || 0)) : 0;
+  const el  = document.getElementById('gmBal');
+  const el2 = document.getElementById('gmBal2');
+  if (el)  el.innerHTML  = fmt(bal);
+  if (el2) el2.innerHTML = '<span class="tk">💶</span> ' + fmt(bal);
+  renderTop();
+  pushBalanceToGame();
+}
+
+function pushBalanceToGame(){
+  const f = document.getElementById('gameFrame');
+  if (f && f.contentWindow && playSession) {
+    try {
+      f.contentWindow.postMessage(
+        { ccg:true, type:'balance', balance: Math.max(0, Math.floor(playSession.balance || 0)) }, '*'
+      );
+    } catch(e){}
+  }
+}
+
+/* ---- session lifecycle ---------------------------------- */
+
+/* Wallet → Game. Called when a game is opened. */
+function startPlaySession(g, me){
+  const loaded = Math.max(0, Math.floor(me.coins));
+  me.coins -= loaded;
+  playSession = { u: me.u, gameId: g.id, game: g.title, loaded, balance: loaded };
+  addTx(me.u, -loaded, 'Loaded into ' + g.title);
+  save();
+  renderTop();
+  return loaded;
+}
+
+/* Game → Wallet. Called on cash-out / close / page reload. */
+function endPlaySession(){
+  if (!playSession) return 0;
+  const user = users.find(x => x.u === playSession.u);
+  const left = Math.max(0, Math.floor(playSession.balance || 0));
+  const name = playSession.game || 'game';
+  playSession = null;
+  if (user && left > 0) {
+    user.coins += left;
+    addTx(user.u, left, 'Returned from ' + name);
+  }
+  save();
+  renderTop();
+  return left;
+}
+
+/* Cash out button inside the game bar */
+function cashOut(){
+  if (!playSession) { closeModal(); return; }
+  const left = Math.max(0, Math.floor(playSession.balance || 0));
+  const name = playSession.game;
+  const loaded = playSession.loaded || 0;
+  closeModal();               // endPlaySession() runs inside closeModal
+  const net = left - loaded;
+  toast(
+    left > 0
+      ? '💰 ' + fmt(left) + ' coins returned from ' + esc(name) +
+        (net >= 0 ? ' (profit +' + fmt(net) + ')' : ' (loss ' + fmt(net) + ')')
+      : '😬 You busted out of ' + esc(name) + ' — nothing to return.',
+    left > 0 ? 'gold' : 'err'
+  );
+}
+
+function bridgeReply(win, id, payload){
+  if (!win) return;
+  try { win.postMessage(Object.assign({ ccg:true, id: id || null }, payload), '*'); } catch(e){}
+}
+
+window.addEventListener('message', function(e){
+  const d = e.data;
+  if (!d || d.ccg !== true) return;
+
+  const f = document.getElementById('gameFrame');
+  if (!f) return;
+
+  const me = currentUser();
+  if (!me) return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'not-logged-in', balance:0 });
+
+  if (!playSession || playSession.u !== me.u) {
+    return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'no-session', balance:0 });
+  }
+
+  const bal = () => Math.max(0, Math.floor(playSession.balance || 0));
+
+  if (d.type === 'getBalance' || d.type === 'ready') {
+    return bridgeReply(e.source, d.id, {
+      type:'balance', ok:true, balance: bal(), player: me.u, game: playSession.game
+    });
+  }
+
+  if (d.type === 'bet') {
+    const amt = Math.floor(Number(d.amount));
+    if (!Number.isFinite(amt) || amt < MIN_BET) {
+      return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'bad-amount', balance: bal() });
+    }
+    if (amt > playSession.balance) {
+      return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'insufficient', balance: bal() });
+    }
+    playSession.balance -= amt;
+    save(); updateGameUI();
+    return bridgeReply(e.source, d.id, { type:'result', ok:true, balance: bal(), bet: amt });
+  }
+
+  if (d.type === 'win') {
+    const amt = Math.floor(Number(d.amount));
+    if (!Number.isFinite(amt) || amt <= 0) {
+      return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'bad-amount', balance: bal() });
+    }
+    playSession.balance += amt;
+    save(); updateGameUI();
+    return bridgeReply(e.source, d.id, { type:'result', ok:true, balance: bal(), win: amt });
+  }
+
+  if (d.type === 'lose') {
+    // coins already left the balance on 'bet' — nothing moves here
+    save();
+    return bridgeReply(e.source, d.id, { type:'result', ok:true, balance: bal() });
+  }
+
+  if (d.type === 'settle') {
+    const delta = Math.floor(Number(d.delta));
+    if (!Number.isFinite(delta) || delta === 0) {
+      return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'bad-amount', balance: bal() });
+    }
+    if (delta < 0 && Math.abs(delta) > playSession.balance) {
+      return bridgeReply(e.source, d.id, { type:'result', ok:false, reason:'insufficient', balance: bal() });
+    }
+    playSession.balance += delta;
+    if (playSession.balance < 0) playSession.balance = 0;
+    save(); updateGameUI();
+    return bridgeReply(e.source, d.id, { type:'result', ok:true, balance: bal() });
+  }
+});
+
+/* =========================================================
+   PLAY A GAME
+   ========================================================= */
+function openGame(id){
+  const g = games.find(x => x.id === id);
+  if (!g) return;
+
+  const me = currentUser();
+  if (!me) { toast('Please log in to play', 'err'); openAuth('login'); return; }
+
+  endPlaySession();  // safety: return coins from any previous session first
+
+  const hasGame = !!(g.builtin || (g.url && g.url.trim()));
+
+  /* ---- wallet → game transfer ---- */
+  if (hasGame) {
+    if (Math.floor(me.coins) < MIN_BET) {
+      toast('You have no coins to play with — ask the host for coins 💶', 'err');
+      return;
+    }
+    startPlaySession(g, me);
+  }
+
+  activeGame = g;
+  g.plays = (g.plays || 0) + 1;
+  save(); renderGames();
+
+  const balNow = playSession ? Math.max(0, Math.floor(playSession.balance)) : me.coins;
+
+  modal(`
+    <div class="modal-head">
+      <h2>${esc(g.title)} <span class="pill green">${esc(g.cat)}</span></h2>
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="balance" style="padding:7px 12px" title="In-game balance">
+          <span class="tk">💶</span> <span id="gmBal">${fmt(balNow)}</span>
+        </span>
+        <button class="x" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+
+    <div class="gbar">
+      <div class="live"><span class="dot"></span>
+        ${hasGame
+          ? 'Coins loaded into the game · cash out to send them back to your wallet'
+          : 'No game file attached to this title'}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        ${hasGame ? `
+          <span>In-game: <b id="gmBal2"><span class="tk">💶</span> ${fmt(balNow)}</b></span>
+          <button class="btn sm gold" onclick="cashOut()">💰 Cash Out</button>` : ''}
+      </div>
+    </div>
+
+    <div class="modal-body" style="padding:0">
+      ${hasGame
+        ? `<div class="gamewrap">
+             <iframe id="gameFrame" class="gameframe"
+               sandbox="allow-scripts allow-forms allow-modals allow-popups allow-pointer-lock"
+               allowfullscreen></iframe>
+           </div>`
+        : `<div class="noGame">
+             <div class="big">🎮</div>
+             <h3>${esc(g.title)}</h3>
+             <p>${esc(g.desc || 'The host has not attached a game file to this title yet.')}</p>
+             <p style="margin-top:18px;font-size:12px;color:#7a7a7a">
+               Host tip: open the Host Panel → Games → paste your game URL or upload an HTML file.
+             </p>
+           </div>`}
+      </div>`, hasGame ? 'fullscreen playing' : 'wide');
+
+  const f = document.getElementById('gameFrame');
+  if (f) {
+    if (g.builtin) f.srcdoc = BUILTIN_GAME;
+    else f.src = g.url;
+  }
+
+  const obs = setInterval(() => {
+    if (!playSession) { clearInterval(obs); return; }
+    const v = Math.max(0, Math.floor(playSession.balance || 0));
+    const b1 = document.getElementById('gmBal');
+    const b2 = document.getElementById('gmBal2');
+    if (!b1 && !b2) { clearInterval(obs); return; }
+    if (b1) b1.textContent = fmt(v);
+    if (b2) b2.innerHTML = '<span class="tk">💶</span> ' + fmt(v);
+  }, 600);
+}
+
+/* =========================================================
+   BUILT-IN DEMO GAME (Coin Flip)
+   ========================================================= */
+const BUILTIN_GAME = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(700px 420px at 50% 0%,#242424,#1A1A1A 70%);color:#f5f5f5;
+  font-family:Inter,-apple-system,'Segoe UI',sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}
+.box{width:100%;max-width:400px;text-align:center}
+h1{font-size:24px;font-weight:900;margin-bottom:6px}
+.sub{color:#9a9a9a;font-size:12.5px;margin-bottom:20px;line-height:1.5}
+.bal{background:#242424;border:1px solid #383838;border-radius:12px;padding:14px;margin-bottom:18px}
+.bal span{font-size:10.5px;letter-spacing:1.4px;color:#9a9a9a;font-weight:900;text-transform:uppercase;display:block;margin-bottom:4px}
+.bal b{font-size:26px;color:#F4A261}
+.coin{width:124px;height:124px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;
+  font-size:46px;font-weight:900;background:linear-gradient(135deg,#E63946,#F4A261);color:#1A1A1A;
+  box-shadow:0 0 46px rgba(230,57,70,.4);transition:.2s}
+.coin.spin{animation:sp .45s linear infinite}
+@keyframes sp{to{transform:rotateY(360deg)}}
+.betrow{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+input{flex:1;height:48px;background:#242424;border:1px solid #383838;border-radius:10px;color:#f5f5f5;
+  padding:0 14px;font-size:16px;font-weight:800;outline:none;font-family:inherit;text-align:center}
+input:focus{border-color:#E63946}
+.quick{display:flex;gap:6px;margin-bottom:14px}
+.quick button{flex:1;height:34px;font-size:11.5px;background:#242424;border:1px solid #383838;color:#9a9a9a;
+  border-radius:8px;font-weight:800;cursor:pointer;font-family:inherit}
+.quick button:hover{border-color:#E63946;color:#E63946}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.main{height:54px;border:0;border-radius:11px;font-weight:900;font-size:14px;cursor:pointer;
+  font-family:inherit;letter-spacing:.6px;transition:.15s}
+button.h{background:linear-gradient(135deg,#E63946,#b82e3a);color:#fff}
+button.t{background:linear-gradient(135deg,#F4A261,#d98a4a);color:#2a1a0a}
+button.main:hover{filter:brightness(1.1);transform:translateY(-1px)}
+button.main:disabled{opacity:.4;pointer-events:none}
+.msg{margin-top:16px;font-size:14px;font-weight:800;min-height:24px}
+.msg.win{color:#F4A261}.msg.lose{color:#E63946}.msg.info{color:#9a9a9a}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>💶 Coin Flip</h1>
+  <div class="sub">Demo game — powered by the Crore Club Coin Bridge. No entry fee.</div>
+
+  <div class="bal"><span>In-Game Balance</span><b id="bal">—</b></div>
+  <div class="coin" id="coin">?</div>
+
+  <div class="betrow"><input id="bet" type="number" value="10" min="1" step="1"></div>
+  <div class="quick">
+    <button onclick="setBet(10)">10</button>
+    <button onclick="setBet(50)">50</button>
+    <button onclick="setBet(100)">100</button>
+    <button onclick="setBet('all')">ALL IN</button>
+  </div>
+
+  <div class="btns">
+    <button class="main h" id="bh" onclick="flip('H')">HEADS</button>
+    <button class="main t" id="bt" onclick="flip('T')">TAILS</button>
+  </div>
+
+  <div class="msg info" id="msg">Place your bet and pick a side.</div>
+</div>
+
+<script>
+var seq = 0, waiting = {}, balance = 0;
+
+function call(type, data){
+  return new Promise(function(res){
+    var id = 'r' + (++seq);
+    waiting[id] = res;
+    parent.postMessage(Object.assign({ ccg:true, type:type, id:id }, data || {}), '*');
+  });
+}
+
+window.addEventListener('message', function(e){
+  var d = e.data;
+  if (!d || d.ccg !== true) return;
+  if (d.id && waiting[d.id]) { waiting[d.id](d); delete waiting[d.id]; }
+  if (typeof d.balance === 'number') setBal(d.balance);
+});
+
+function setBal(v){
+  balance = Number(v) || 0;
+  document.getElementById('bal').textContent = '💶 ' + balance.toLocaleString('en-IN');
+}
+function setBet(v){
+  var i = document.getElementById('bet');
+  i.value = (v === 'all') ? Math.max(1, balance) : v;
+}
+function busy(b){
+  document.getElementById('bh').disabled = b;
+  document.getElementById('bt').disabled = b;
+}
+function say(t, cls){ var m = document.getElementById('msg'); m.className = 'msg ' + cls; m.textContent = t; }
+
+parent.postMessage({ ccg:true, type:'ready' }, '*');
+call('getBalance').then(function(r){ if (r && r.ok) setBal(r.balance); });
+
+async function flip(side){
+  var coin = document.getElementById('coin');
+  var amt = Math.floor(Number(document.getElementById('bet').value));
+
+  if (!amt || amt < 1) { say('Enter a valid bet amount.', 'lose'); return; }
+  if (amt > balance)   { say('Not enough coins for that bet.', 'lose'); return; }
+
+  busy(true); coin.classList.add('spin'); say('Flipping…', 'info');
+
+  var bet = await call('bet', { amount: amt });
+  if (!bet || !bet.ok){
+    coin.classList.remove('spin'); busy(false);
+    say(bet && bet.reason === 'insufficient' ? 'Not enough coins!' : 'Bet was rejected.', 'lose');
+    return;
+  }
+  setBal(bet.balance);
+
+  setTimeout(async function(){
+    coin.classList.remove('spin');
+    var result = Math.random() < 0.5 ? 'H' : 'T';
+    coin.textContent = result;
+
+    if (result === side){
+      var win = await call('win', { amount: amt * 2 });
+      setBal(win.balance);
+      say('🎉 ' + (result === 'H' ? 'HEADS' : 'TAILS') + ' — you won 💶 ' + (amt * 2) + ' coins!', 'win');
+    } else {
+      await call('lose', { amount: amt });
+      say('😔 ' + (result === 'H' ? 'HEADS' : 'TAILS') + ' — you lost 💶 ' + amt + ' coins.', 'lose');
+    }
+    busy(false);
+  }, 700);
+}
+<\/script>
+</body>
+</html>`;
+
+/* =========================================================
+   COIN BRIDGE DOCS
+   ========================================================= */
+function openBridgeDocs(){
+  modal(`
+    <div class="modal-head">
+      <h2>🔌 Coin Bridge API</h2>
+      <button class="x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--mut);font-size:13.5px;line-height:1.65;margin-bottom:14px">
+        Every game runs inside a sandboxed iframe and talks to Crore Club with
+        <code>window.parent.postMessage()</code>. Coins work like a
+        <b style="color:var(--txt)">wallet → table → wallet</b> transfer:
+      </p>
+      <ol style="color:var(--mut);font-size:13px;line-height:1.8;margin:0 0 18px 18px">
+        <li>Player hits <b style="color:var(--txt)">Play</b> → their whole wallet balance is moved into the game.</li>
+        <li>The game bets / pays out against that in-game balance through the bridge.</li>
+        <li>Player hits <b style="color:var(--txt)">💰 Cash Out</b> (or closes the game) → whatever is left is returned to their wallet.</li>
+      </ol>
+      <p style="color:var(--mut);font-size:13.5px;line-height:1.65;margin-bottom:18px">
+        There are <b style="color:var(--txt)">no entry fees</b> — the game itself decides when to bet and when to pay out.
+      </p>
+
+      <h3 style="font-size:14px;font-weight:900;margin-bottom:10px">Messages the game sends</h3>
+      <table class="tbl" style="margin-bottom:22px">
+        <thead><tr><th>type</th><th>Payload</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>ready</code></td><td>—</td><td>Handshake. Site replies with the current in-game balance.</td></tr>
+          <tr><td><code>getBalance</code></td><td>—</td><td>Asks for the current in-game balance.</td></tr>
+          <tr><td><code>bet</code></td><td><code>{ amount }</code></td><td>Deducts from the in-game balance. Fails with <code>insufficient</code> if the player is short.</td></tr>
+          <tr><td><code>win</code></td><td><code>{ amount }</code></td><td>Credits the in-game balance.</td></tr>
+          <tr><td><code>lose</code></td><td><code>{ amount }</code></td><td>Optional. Nothing moves (the coins already left on <code>bet</code>).</td></tr>
+          <tr><td><code>settle</code></td><td><code>{ delta }</code></td><td>One-shot adjustment. Positive credits, negative deducts.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:14px;font-weight:900;margin-bottom:10px">Replies from the site</h3>
+      <table class="tbl" style="margin-bottom:22px">
+        <thead><tr><th>type</th><th>Payload</th></tr></thead>
+        <tbody>
+          <tr><td><code>balance</code></td><td><code>{ ok, balance, player, game }</code></td></tr>
+          <tr><td><code>result</code></td><td><code>{ ok, balance, reason? }</code> — <code>reason</code> is <code>insufficient</code>, <code>bad-amount</code> or <code>no-session</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:14px;font-weight:900;margin-bottom:10px">Drop-in helper for your games</h3>
+      <pre>var seq = 0, waiting = {};
+
+function call(type, data){
+  return new Promise(function(res){
+    var id = 'r' + (++seq);
+    waiting[id] = res;
+    parent.postMessage(
+      Object.assign({ ccg:true, type:type, id:id }, data || {}), '*'
+    );
+  });
+}
+
+window.addEventListener('message', function(e){
+  var d = e.data;
+  if (!d || d.ccg !== true) return;
+  if (d.id && waiting[d.id]) { waiting[d.id](d); delete waiting[d.id]; }
+  if (typeof d.balance === 'number') updateMyBalanceUI(d.balance);
+});
+
+call('getBalance').then(r =&gt; updateMyBalanceUI(r.balance));
+
+// place a bet
+var r = await call('bet', { amount: 50 });
+if (!r.ok) { alert('Not enough coins!'); return; }
+
+// pay out a win
+await call('win', { amount: 100 });</pre>
+
+      <p style="color:var(--mut);font-size:12.5px;line-height:1.7;margin-top:18px">
+        💡 The built-in <b style="color:var(--txt)">Coin Flip</b> game is a complete working example — open it and
+        view source to see the bridge in action.
+      </p>
+
+      <button class="btn primary" style="width:100%;height:44px;margin-top:20px" onclick="openAdmin('games')">
+        Go to Host Panel → Games
+      </button>
+    </div>`, 'wide');
+}
+
+/* =========================================================
+   HOST / ADMIN PANEL
+   ========================================================= */
+function openAdmin(tab = 'overview'){
+  if (!isAdmin()) return toast('Host access only', 'err');
+
+  let body = '';
+  if (tab === 'overview')      body = adminOverview();
+  else if (tab === 'users')    body = adminUsers();
+  else if (tab === 'games')    body = adminGames();
+  else                         body = adminTx();
+
+  const tabs = [['overview','Overview'],['users','Players'],['games','Games'],['tx','Transactions']];
+
+  modal(`
+    <div class="modal-head">
+      <h2>🎛️ Host Control Panel</h2>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn sm ghost" onclick="openBridgeDocs()">🔌 Coin Bridge API</button>
+        <button class="x" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div class="tabs">
+      ${tabs.map(([k, label]) =>
+        `<button class="${tab === k ? 'on' : ''}" onclick="openAdmin('${k}')">${label}</button>`).join('')}
+    </div>
+    <div class="modal-body">${body}</div>`, 'fullscreen');
+}
+
+function adminOverview(){
+  const totalCoins = users.reduce((a, b) => a + b.coins, 0);
+  const totalPlays = games.reduce((a, b) => a + (b.plays || 0), 0);
+  const recent = txs.slice(-8).reverse();
+
+  return `
+    <div class="stats">
+      <div class="stat"><div class="k">Players</div><div class="v">${users.length}</div></div>
+      <div class="stat"><div class="k">Games Live</div><div class="v blue">${games.length}</div></div>
+      <div class="stat"><div class="k">Coins In Circulation</div><div class="v gold">${fmt(totalCoins)}</div></div>
+      <div class="stat"><div class="k">Total Plays</div><div class="v">${fmt(totalPlays)}</div></div>
+    </div>
+
+    <div class="panel" style="background:linear-gradient(135deg,rgba(230,57,70,.10),transparent);border-color:rgba(230,57,70,.3)">
+      <h3 style="color:var(--red)"><span class="tk">💶</span> Issue coins to your players</h3>
+      <p style="color:var(--mut);font-size:13px;line-height:1.6">
+        There are no entry fees and no bonuses — players start at 0 coins. Head to the
+        <b style="color:var(--txt)">Players</b> tab and hit <b style="color:var(--txt)">+ Coins</b> on anyone's row to credit them.
+      </p>
+    </div>
+
+    <h3 style="font-size:14px;font-weight:900;margin-bottom:12px">Recent Activity</h3>
+    ${recent.length ? `
+    <table class="tbl">
+      <thead><tr><th>Player</th><th>Note</th><th>When</th><th style="text-align:right">Amount</th></tr></thead>
+      <tbody>${recent.map(t => `<tr>
+        <td><b>${esc(t.u)}</b></td>
+        <td style="color:var(--mut)">${esc(t.note)}</td>
+        <td style="color:var(--mut)">${new Date(t.t).toLocaleString()}</td>
+        <td style="text-align:right;font-weight:900;color:${t.amt >= 0 ? 'var(--orange)' : 'var(--red)'}">
+          ${t.amt >= 0 ? '+' : ''}${fmt(t.amt)} <span class="tk">💶</span></td>
+      </tr>`).join('')}</tbody>
+    </table>` : `<p style="color:var(--mut)">No activity yet.</p>`}`;
+}
+
+function adminUsers(){
+  return `
+    <table class="tbl">
+      <thead><tr><th>Player</th><th>Role</th><th>Coins</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${users.map(u => `<tr>
+          <td><b>${esc(u.u)}</b></td>
+          <td>${u.role === 'admin'
+                ? '<span class="pill gold">Host</span>'
+                : '<span class="pill">Player</span>'}</td>
+          <td style="color:var(--orange);font-weight:900"><span class="tk">💶</span> ${fmt(u.coins)}</td>
+          <td style="color:var(--mut)">${new Date(u.joined).toLocaleDateString()}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn sm primary" onclick="openGive('${esc(u.u)}')">+ Coins</button>
+              ${u.u !== 'admin' ? `
+                <button class="btn sm ghost" onclick="toggleRole('${esc(u.u)}')">
+                  ${u.role === 'admin' ? 'Revoke Host' : 'Make Host'}
+                </button>
+                <button class="btn sm danger" onclick="delUser('${esc(u.u)}')">Delete</button>` : ''}
+            </div>
+          </td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function adminGames(){
+  return `
+    <div class="panel">
+      <h3>➕ Add a new game</h3>
+
+      <div class="row2">
+        <div class="field"><label>Game title</label><input id="gTitle" placeholder="Aviator"></div>
+        <div class="field"><label>Category</label>
+          <select id="gCat">${CATS.map(c => `<option>${c}</option>`).join('')}</select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field"><label>Thumbnail URL (optional)</label>
+          <input id="gImg" placeholder="Leave blank for auto-generated"></div>
+        <div class="field"><label>Short description</label>
+          <input id="gDesc" placeholder="Cash out before the plane flies away"></div>
+      </div>
+
+      <div class="field">
+        <label>Game URL — link to your HTML5 game</label>
+        <input id="gUrl" placeholder="https://yourgame.netlify.app">
+      </div>
+
+      <div class="field">
+        <label>…or upload an HTML file (max 2 MB)</label>
+        <input id="gFile" type="file" accept=".html,.htm">
+      </div>
+
+      <p style="color:var(--mut);font-size:12.5px;line-height:1.6;margin-bottom:16px">
+        🎨 <b style="color:var(--txt)">Thumbnails are auto-generated</b> based on the game title.
+        Leave the "Thumbnail URL" blank and we'll create a beautiful cover for you.
+        <a onclick="openBridgeDocs()" style="color:var(--red);cursor:pointer;font-weight:800">View the Coin Bridge API →</a>
+      </p>
+
+      <button class="btn primary" style="width:100%;height:46px" onclick="addGame()">+ Publish Game</button>
+    </div>
+
+    <hr>
+
+    <h3 style="font-size:14px;font-weight:900;margin-bottom:12px">Your Games (${games.length})</h3>
+    ${games.length ? `
+    <table class="tbl">
+      <thead><tr><th>Game</th><th>Category</th><th>Plays</th><th>Source</th><th></th></tr></thead>
+      <tbody>
+        ${games.map(g => `<tr>
+          <td style="display:flex;align-items:center;gap:10px">
+            <img src="${thumb(g)}" style="width:46px;height:30px;object-fit:cover;border-radius:6px">
+            <b>${esc(g.title)}</b>
+          </td>
+          <td style="color:var(--mut)">${esc(g.cat)}</td>
+          <td style="color:var(--mut)">${fmt(g.plays || 0)}</td>
+          <td>${g.builtin
+                ? '<span class="pill blue">Built-in demo</span>'
+                : (g.url ? '<span class="pill green">Linked</span>' : '<span class="pill">No file</span>')}</td>
+          <td><button class="btn sm danger" onclick="delGame('${g.id}')">Delete</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>` : `<p style="color:var(--mut)">No games added yet.</p>`}`;
+}
+
+function adminTx(){
+  const list = txs.slice().reverse();
+  return list.length ? `
+    <table class="tbl">
+      <thead><tr><th>Date</th><th>Player</th><th>Note</th><th style="text-align:right">Amount</th></tr></thead>
+      <tbody>${list.map(t => `<tr>
+        <td style="color:var(--mut)">${new Date(t.t).toLocaleString()}</td>
+        <td><b>${esc(t.u)}</b></td>
+        <td style="color:var(--mut)">${esc(t.note)}</td>
+        <td style="text-align:right;font-weight:900;color:${t.amt >= 0 ? 'var(--orange)' : 'var(--red)'}">
+          ${t.amt >= 0 ? '+' : ''}${fmt(t.amt)} <span class="tk">💶</span></td>
+      </tr>`).join('')}</tbody>
+    </table>` : `<p style="color:var(--mut)">No transactions recorded.</p>`;
+}
+
+/* ---------- admin actions ---------- */
+function openGive(username){
+  const u = getUser(username);
+  if (!u) return;
+  modal(`
+    <div class="modal-head">
+      <h2>Give Coins</h2>
+      <button class="x" onclick="openAdmin('users')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Player</label><input value="${esc(u.u)}" disabled></div>
+      <div class="field"><label>Current balance</label><input value="💶 ${fmt(u.coins)}" disabled></div>
+      <div class="field"><label>Amount (negative to deduct)</label>
+        <input id="giveAmt" type="number" value="100"></div>
+      <div class="field"><label>Note</label>
+        <input id="giveNote" placeholder="Top up" value="Host credit"></div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        ${[50, 100, 500, 1000, 5000].map(v =>
+          `<button class="btn sm ghost" onclick="document.getElementById('giveAmt').value=${v}">+${v}</button>`).join('')}
+      </div>
+      <button class="btn primary" style="width:100%;height:46px" onclick="doGive('${esc(u.u)}')">
+        Apply to Balance
+      </button>
+    </div>`);
+  setTimeout(() => $('#giveAmt')?.select(), 60);
+}
+
+function doGive(username){
+  const amt = parseInt($('#giveAmt').value || '0', 10);
+  const note = $('#giveNote').value.trim() || 'Host adjustment';
+  if (!amt) return toast('Enter a non-zero amount', 'err');
+  const u = getUser(username);
+  if (!u) return;
+  if (u.coins + amt < 0) return toast('Player cannot go below 0 coins', 'err');
+
+  u.coins += amt;
+  addTx(u.u, amt, note);
+  save(); renderTop(); renderGames();
+  openAdmin('users');
+  toast((amt > 0 ? '+' : '') + fmt(amt) + ' coins → ' + u.u, amt > 0 ? 'gold' : 'ok');
+}
+
+function toggleRole(username){
+  const u = getUser(username);
+  if (!u) return;
+  u.role = u.role === 'admin' ? 'player' : 'admin';
+  save(); renderTop(); openAdmin('users');
+  toast(u.u + ' is now ' + (u.role === 'admin' ? 'a Host' : 'a Player'));
+}
+
+function delUser(username){
+  if (!confirm('Delete player "' + username + '" permanently?')) return;
+  users = users.filter(x => x.u !== username);
+  txs = txs.filter(t => t.u !== username);
+  if (session === username) session = null;
+  if (playSession && playSession.u === username) playSession = null;
+  save(); renderTop(); renderGames(); openAdmin('users');
+  toast('Player deleted');
+}
+
+function delGame(id){
+  const g = games.find(x => x.id === id);
+  if (!g || !confirm('Delete game "' + g.title + '"?')) return;
+  games = games.filter(x => x.id !== id);
+  save(); renderGames(); openAdmin('games');
+  toast('Game removed');
+}
+
+async function addGame(){
+  const title = $('#gTitle').value.trim();
+  if (!title) return toast('Enter a game title', 'err');
+
+  const file = $('#gFile').files[0];
+  let url = $('#gUrl').value.trim();
+
+  if (file) {
+    if (file.size > 2 * 1024 * 1024) return toast('File too large (max 2 MB)', 'err');
+    url = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.readAsDataURL(file);
+    });
+  }
+
+  games.unshift({
+    id: uid(),
+    title,
+    cat: $('#gCat').value,
+    img: $('#gImg').value.trim(),
+    url,
+    builtin: false,
+    desc: $('#gDesc').value.trim(),
+    plays: 0,
+    added: Date.now()
+  });
+
+  save(); renderGames(); openAdmin('games');
+  toast('🎮 "' + title + '" published!');
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+
+/* Safety net: if the tab was closed / refreshed mid-game, the coins were still
+   sitting in the saved play session. Hand them back to the wallet on load. */
+(function recoverPlaySession(){
+  if (!playSession) return;
+  const user = users.find(x => x.u === playSession.u);
+  const left = Math.max(0, Math.floor(playSession.balance || 0));
+  const name = playSession.game || 'game';
+  playSession = null;
+  if (user && left > 0) {
+    user.coins += left;
+    txs.push({ id: uid(), u: user.u, amt: left, note: 'Recovered from ' + name, t: Date.now() });
+    if (txs.length > 1000) txs = txs.slice(-1000);
+  }
+  LS.set('ccg_play', null);
+  LS.set('ccg_users', users);
+  LS.set('ccg_tx', txs);
+})();
+
+renderAll();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    document.getElementById('searchInput')?.focus();
+  }
+});
+</script>
+</body>
+</html>
